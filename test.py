@@ -30,12 +30,12 @@ class test():
         img = cv2.cvtColor(img,1)           
         gray = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
 
-        corners = cv2.goodFeaturesToTrack(gray,4,0.5,10)
+        corners = cv2.goodFeaturesToTrack(gray,15,0.1,10)
         corners = np.int0(corners)
 
         for i in corners:
             x,y = i.ravel()
-            cv2.circle(img,(x,y),5,(0, 0, 255),-1)
+            cv2.circle(img,(x,y),3,(0, 0, 255),-1)
             print("X: {} Y: {}".format(x,y))
         cv2.imwrite("asd.jpg", img)
         plt.imshow(img),plt.show()
@@ -96,7 +96,7 @@ class test():
             cv2.imwrite('Canny.jpg', edges)
         else:
             edges = cv2.Canny(img,100,150)
-            cv2.imwrite('Canny_threshold.jpg', edges)
+            cv2.imwrite('Canny.jpg', edges)
             
         
 
@@ -107,7 +107,7 @@ class test():
         kernel = np.ones((2,2), np.uint8) 
         if img is None:
             img = self.original_img
-        img_erosion = cv2.erode(img, kernel, iterations=1) 
+        img_erosion = cv2.erode(img, kernel, iterations=5) 
         cv2.imwrite("erosion.jpg", img_erosion)
         self.images["Erosion"] = img_erosion
         return img_erosion
@@ -149,8 +149,11 @@ class test():
                 self.original_img = img
                 self.images = {"Original" : self.original_img}
                 #a = self.remove_isolated_pixels(img)
+                
                 t_map = self.thresholding()
+                
                 t_e_map = self.erosion(t_map)
+                #c_map = self.canny(t_e_map)
                 blur = self.blur(t_e_map)
 
                 #self.images = {"Blurred" : blur}
