@@ -1,6 +1,7 @@
 from car_controller.Signal import Signal
-MAP_SIZE_PIXELS         = 2000
-MAP_SIZE_METERS         = 50
+import config as cfg
+MAP_SIZE_PIXELS         = cfg.MAP_SIZE_PIXELS
+MAP_SIZE_METERS         = cfg.MAP_SIZE_METERS
 class SlamDataModel:
 
     def __init__(self):
