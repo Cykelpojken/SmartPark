@@ -18,7 +18,7 @@ class test():
 
     THRESHOLD               = 50 #less means more stricts
     EROSION                 = 3 #Iteration. More means thicker
-    DILATION                = 2 #Iteration. More means more is removed
+    DILATION                = 1 #Iteration. More means more is removed
 
     viz = MapVisualizer(MAP_SIZE_PIXELS, MAP_SIZE_METERS, 'SLAM')
     c = CarController("localhost")
@@ -44,7 +44,7 @@ class test():
             cv2.circle(img,(x,y),3,(0, 0, 255),-1)
             print("X: {} Y: {}".format(int(x),int(y)))
         cv2.imwrite("asd.jpg", img)
-        #plt.imshow(img),plt.show()
+        plt.imshow(img),plt.show()
         #print(self.t2 - self.t1)      
 
     def contrast(self, img = None):
@@ -77,7 +77,7 @@ class test():
             cv2.imwrite('threshold_map_127.jpg', thresh1)
 
         else:
-            ret,thresh1 = cv2.threshold(img,1,255,cv2.THRESH_BINARY)
+            ret,thresh1 = cv2.threshold(img,25,255,cv2.THRESH_BINARY)
             cv2.imwrite('threshold_map_127.jpg', thresh1)
 
         return thresh1
@@ -131,7 +131,7 @@ class test():
         if img is None:
             img = cv2.imread("erosion.jpg", 0)
         
-        blur = cv2.GaussianBlur(img,(5,5),0)
+        blur = cv2.GaussianBlur(img,(3,3),cv2.BORDER_DEFAULT)
         cv2.imwrite("blurred and done.jpg", blur)
         return blur
 
@@ -152,47 +152,96 @@ class test():
 
         return new_image
 
+    def feature_detection(self, image = None): #Not working well
+        img1 = cv2.imread('blurred and done.jpg', cv2.IMREAD_GRAYSCALE)
+        img2 = cv2.imread('box.png', cv2.IMREAD_GRAYSCALE)   
+        plt.imshow(img1),plt.show() 
 
+        orb = cv2.ORB_create()
+        kp1, des1 = orb.detectAndCompute(img1,None)
+        kp2, des2 = orb.detectAndCompute(img2,None)
+        
+        bf = cv2.BFMatcher(cv2.NORM_HAMMING, crossCheck=True)
+        matches = bf.match(des1,des2)
+        matches = sorted(matches, key = lambda x:x.distance)
+        img3 = cv2.drawMatches(img1,kp1,img2,kp2,matches[:8],None,flags=cv2.DrawMatchesFlags_NOT_DRAW_SINGLE_POINTS)
+        plt.imshow(img3),plt.show() 
 
-############################################################################################################################
+    def hough_transform(self, image = None):
+        img = cv2.imread('box.jpg')
+        gray = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
+        edges = cv2.Canny(gray,50,150,apertureSize = 3)
+        minLineLength = 100
+        maxLineGap = 10
+        lines = cv2.HoughLinesP(edges,1,np.pi/180,0,minLineLength,maxLineGap)
+        for x1,y1,x2,y2 in lines[0]:
+            cv2.line(img,(x1,y1),(x2,y2),(0,255,0),2)
+
+        cv2.imwrite('houghlines5.jpg',img)
+
+    def contours(self, image = None):
+        im = cv2.imread('threshold_map_127.jpg')
+        imgray = cv2.cvtColor(im, cv2.COLOR_BGR2GRAY)
+
+        ret, thresh = cv2.threshold(imgray, 1, 255, 0)
+
+        contours, hierarchy = cv2.findContours(thresh, cv2.RETR_TREE, 
+        cv2.CHAIN_APPROX_SIMPLE)
+
+        img = cv2.drawContours(im, contours, -1, (0, 255, 0), 3)
+
+        cv2.imwrite("contours.jpg", img)
+        # cv2.imshow('Output', img)
+        # wk = cv2.waitKey(0) & 0xFF
+        # if wk == 27:
+        #     cv2.destroyAllWindows()
+#################################################################################
 ############################################################################################################################
 ############################################################################################################################
 
     def image_processing(self):
-        
-        mapimg = np.reshape(np.frombuffer(self.c.slam_data_model.mapbytes, dtype=np.uint8), (self.MAP_SIZE_PIXELS, self.MAP_SIZE_PIXELS))
-        cv2.imwrite('map.jpg', mapimg)
-    
-        img = cv2.imread('map.jpg', 0)
-        self.original_img = img
-        self.images = {"Original" : self.original_img}
-        #a = self.remove_isolated_pixels(img)
-        
-        t_map = self.thresholding()
-        d_map = self.dilation(t_map)
-        t_e_map = self.erosion(d_map)
-        #c_map = self.canny(t_e_map)
-        blur = self.blur(t_e_map)
+        # time.sleep(3)
+        # mapimg = np.reshape(np.frombuffer(self.c.slam_data_model.mapbytes, dtype=np.uint8), (self.MAP_SIZE_PIXELS, self.MAP_SIZE_PIXELS))
+        # cv2.imwrite('map.jpg', mapimg)
 
-        #self.images = {"Blurred" : blur}
+        self.feature_detection()
+        # self.hough_transform()
+        # img = cv2.imread('map.jpg', 0)
+        # self.thresholding(img)
+        # self.contours()
+
+        # img = cv2.imread('map.jpg', 0)
+        # self.original_img = img
+        # self.images = {"Original" : self.original_img}
+        # # a = self.remove_isolated_pixels(img)
+        
+        # t_map = self.thresholding()
+        # d_map = self.dilation(t_map)
+        # t_e_map = self.erosion(d_map)
+        # #c_map = self.canny(t_e_map)
+        # blur = self.blur(t_e_map)
+
+        # #self.images = {"Blurred" : blur}
         print("---------------------------------------------------------------------")
-        self.draw_corners(t_map)
+        #self.draw_corners(t_map)
         print("---------------------------------------------------------------------")
         #time.sleep(123)
 
         #self.show_image()
 
     def start_SLAM(self):
+        self.image_processing()
+        print("done")
         #threading.Thread(target=self.image_processing, daemon=False).start()
-        while True:
-            if self.c.slam_data_model.x is not None:
-                print("X: {}, Y: {}".format(int(self.c.slam_data_model.x/100), int(self.c.slam_data_model.y/100)))
-                if not self.viz.display(self.c.slam_data_model.x/1000., self.c.slam_data_model.y/1000., 1, self.c.slam_data_model.mapbytes):
-                    self.image_processing()
-                    exit(0)
+        # while True:
+        #     if self.c.slam_data_model.x is not None:
+        #         print("X: {}, Y: {}".format(int(self.c.slam_data_model.x/100), int(self.c.slam_data_model.y/100)))
+        #         if not self.viz.display(self.c.slam_data_model.x/1000., self.c.slam_data_model.y/1000., 1, self.c.slam_data_model.mapbytes):
+        #             self.image_processing()
+        #             exit(0)
                     
-            else:
-                time.sleep(1)
+        #     else:
+        #         time.sleep(1)
 
 if __name__ == '__main__':
     t = test()
