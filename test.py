@@ -6,8 +6,10 @@ import numpy as np
 import cv2
 from matplotlib import pyplot as plt
 import threading
+import image_slicer
+from PIL import ImageDraw, ImageFont
 '''Conclusion: Might need to scale down. Then we do threshold where we just make a distinction between white and black. 
-Then we use erosion to make the lines thicker. Finally we blur the image to make it less "pixely" and then print corners.'''
+Then we use erosion to make the lines thicker. Finally we blur the image to make it less "pixely".'''
 class test():
 
     MAP_SIZE_PIXELS         = cfg.MAP_SIZE_PIXELS
@@ -16,9 +18,9 @@ class test():
     ALPHA_CONTRAST          = 1.5
     BETA_BRIGHTNESS         = 0
 
-    THRESHOLD               = 50 #less means more stricts
-    EROSION                 = 3 #Iteration. More means thicker
-    DILATION                = 1 #Iteration. More means more is removed
+    THRESHOLD               = 100 #less means more stricts
+    EROSION                 = 2 #Iteration. More means thicker
+    DILATION                = 2 #Iteration. More means more is removed
 
     viz = MapVisualizer(MAP_SIZE_PIXELS, MAP_SIZE_METERS, 'SLAM')
     c = CarController("localhost")
@@ -58,7 +60,6 @@ class test():
                 #for c in range(image.shape[2]):
                 new_image[y,x] = np.clip(self.ALPHA_CONTRAST * img[y,x] + self.BETA_BRIGHTNESS, 0, 255)
 
-        self.images["contrast"] = new_image
         return new_image
 
     def scale(self):
@@ -67,18 +68,12 @@ class test():
         dim = (width, height)
         resized = cv2.resize(self.original_img, dim, interpolation = cv2.INTER_AREA) 
         self.original_img = resized
-        #self.images["Scaled"] = resized 
 
     def thresholding(self, img = None):
         if img is None:
-            img = self.original_img
-            ret,thresh1 = cv2.threshold(img,self.THRESHOLD,255,cv2.THRESH_BINARY)
-            self.images["Thresholding"] = thresh1
-            cv2.imwrite('threshold_map_127.jpg', thresh1)
-
-        else:
-            ret,thresh1 = cv2.threshold(img,25,255,cv2.THRESH_BINARY)
-            cv2.imwrite('threshold_map_127.jpg', thresh1)
+            img = cv2.imread("map_{}.jpg".format(self.time))
+        ret,thresh1 = cv2.threshold(img,self.THRESHOLD,255,cv2.THRESH_BINARY)
+        cv2.imwrite('threshold_{}.jpg'.format(self.time), thresh1)
 
         return thresh1
             
@@ -96,9 +91,8 @@ class test():
     
     def canny(self, img = None):
         if img is None:
-            img = self.original_img
+            img = cv2.imread("erosion.jpg", 0)
             edges = cv2.Canny(img,100,150)
-            self.images["Canny"] = edges
             cv2.imwrite('Canny.jpg', edges)
         else:
             edges = cv2.Canny(img,100,150)
@@ -114,8 +108,7 @@ class test():
         if img is None:
             img = self.original_img
         img_erosion = cv2.erode(img, kernel, iterations=self.EROSION) 
-        cv2.imwrite("erosion.jpg", img_erosion)
-        self.images["Erosion"] = img_erosion
+        cv2.imwrite("erosion_{}.jpg".format(self.time), img_erosion)
         return img_erosion
     
     def dilation(self, img = None):
@@ -123,16 +116,15 @@ class test():
         if img is None:
             img = self.original_img
         img_dilation = cv2.dilate(img, kernel, iterations=self.DILATION) 
-        cv2.imwrite("dilation.jpg", img_dilation)
-        self.images["Erosion"] = img_dilation
+        cv2.imwrite("dilation_{}.jpg".format(self.time), img_dilation)
         return img_dilation
     
     def blur(self, img = None):
         if img is None:
             img = cv2.imread("erosion.jpg", 0)
         
-        blur = cv2.GaussianBlur(img,(3,3),cv2.BORDER_DEFAULT)
-        cv2.imwrite("blurred and done.jpg", blur)
+        blur = cv2.GaussianBlur(img,(7,7),cv2.BORDER_DEFAULT)
+        cv2.imwrite("blurred_{}.jpg".format(self.time), blur)
         return blur
 
     def remove_isolated_pixels(self, image):
@@ -152,33 +144,110 @@ class test():
 
         return new_image
 
-    def feature_detection(self, image = None): #Not working well
-        img1 = cv2.imread('blurred and done.jpg', cv2.IMREAD_GRAYSCALE)
-        img2 = cv2.imread('box.png', cv2.IMREAD_GRAYSCALE)   
-        plt.imshow(img1),plt.show() 
-
+    def feature_detection(self, image = None): #Works Decent with edgethreshold on orb =10
+        img1 = cv2.imread('blurred and done.jpg',0)          # queryImage
+        img2 = cv2.imread('box.png',0) # trainImage
+        plt.imshow(img2),plt.show()
+        # Initiate SIFT detector
         orb = cv2.ORB_create()
+        orb.setEdgeThreshold(10) #10 working pretty good
+        print([method_name for method_name in dir(orb)
+                  if callable(getattr(orb, method_name))])
+        # find the keypoints and descriptors with SIFT
         kp1, des1 = orb.detectAndCompute(img1,None)
         kp2, des2 = orb.detectAndCompute(img2,None)
-        
-        bf = cv2.BFMatcher(cv2.NORM_HAMMING, crossCheck=True)
-        matches = bf.match(des1,des2)
-        matches = sorted(matches, key = lambda x:x.distance)
-        img3 = cv2.drawMatches(img1,kp1,img2,kp2,matches[:8],None,flags=cv2.DrawMatchesFlags_NOT_DRAW_SINGLE_POINTS)
-        plt.imshow(img3),plt.show() 
+        # create BFMatcher object
+        bf = cv2.BFMatcher(cv2.NORM_HAMMING2, crossCheck=True)
 
+        # Match descriptors.
+        matches = bf.match(des1,des2)
+        # Sort them in the order of their distance.
+        matches = sorted(matches, key = lambda x:x.distance)
+
+        # Draw first 10 matches.
+        img3 = cv2.drawMatches(img1,kp1,img2,kp2,matches[:5],None, flags=2)
+
+        plt.imshow(img3),plt.show()
+
+    def find_spot(self): #NOT WORKING
+        MIN_MATCH_COUNT = 5
+
+        img1 = cv2.imread('box.png',0)          # queryImage
+        img2 = cv2.imread('blurred_{}.jpg'.format(self.time),0) # trainImage
+
+        # Initiate SIFT detector
+        sift = cv2.xfeatures2d.SIFT_create()
+        print([method_name for method_name in dir(sift)
+                  if callable(getattr(sift, method_name))])
+        # find the keypoints and descriptors with SIFT
+        kp1, des1 = sift.detectAndCompute(img1,None)
+        kp2, des2 = sift.detectAndCompute(img2,None)
+
+        FLANN_INDEX_KDTREE = 0
+        index_params = dict(algorithm = FLANN_INDEX_KDTREE, trees = 5)
+        search_params = dict(checks = 50)
+
+        flann = cv2.FlannBasedMatcher(index_params, search_params)
+
+        matches = flann.knnMatch(des1,des2,k=2)
+
+        # store all the good matches as per Lowe's ratio test.
+        good = []
+        for m,n in matches:
+            if m.distance < 0.7*n.distance:
+                good.append(m)
+
+
+        if len(good)>MIN_MATCH_COUNT:
+            src_pts = np.float32([ kp1[m.queryIdx].pt for m in good ]).reshape(-1,1,2)
+            dst_pts = np.float32([ kp2[m.trainIdx].pt for m in good ]).reshape(-1,1,2)
+            print(src_pts)
+
+            M, mask = cv2.findHomography(src_pts, dst_pts, cv2.RANSAC,5.0)
+            matchesMask = mask.ravel().tolist()
+            h,w = img1.shape
+            pts = np.float32([ [0,0],[0,h-1],[w-1,h-1],[w-1,0] ]).reshape(-1,1,2)
+            #pts = np.float32([pts])
+            dst = cv2.perspectiveTransform(pts,M)
+            
+
+            img2 = cv2.polylines(img2,[np.int32(dst)],True,50,3, cv2.LINE_AA)
+            #plt.imshow(img2, 'gray'),plt.show()
+
+
+        else:
+            print("Not enough matches are found - %d/%d" % (len(good),MIN_MATCH_COUNT))
+            matchesMask = None
+
+        draw_params = dict(matchColor = (0,255,0), # draw matches in green color
+                   singlePointColor = None,
+                   matchesMask = matchesMask, # draw only inliers
+                   flags = 2)
+
+        img3 = cv2.drawMatches(img1,kp1,img2,kp2,good,None,**draw_params)
+        cv2.imwrite("identified_{}.jpg".format(self.time), img3)
+        #plt.imshow(img3, 'gray'),plt.show()
+                   
     def hough_transform(self, image = None):
-        img = cv2.imread('box.jpg')
+        img = cv2.imread('blurred and done.jpg')
         gray = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
         edges = cv2.Canny(gray,50,150,apertureSize = 3)
-        minLineLength = 100
-        maxLineGap = 10
-        lines = cv2.HoughLinesP(edges,1,np.pi/180,0,minLineLength,maxLineGap)
-        for x1,y1,x2,y2 in lines[0]:
-            cv2.line(img,(x1,y1),(x2,y2),(0,255,0),2)
 
-        cv2.imwrite('houghlines5.jpg',img)
+        lines = cv2.HoughLines(edges,1,np.pi/180,1)
+        for rho,theta in lines[0]:
+            a = np.cos(theta)
+            b = np.sin(theta)
+            x0 = a*rho
+            y0 = b*rho
+            x1 = int(x0 + 1000*(-b))
+            y1 = int(y0 + 1000*(a))
+            x2 = int(x0 - 1000*(-b))
+            y2 = int(y0 - 1000*(a))
 
+            cv2.line(img,(x1,y1),(x2,y2),(0,0,255),2)
+
+        cv2.imwrite('houghlines3.jpg',img)
+    
     def contours(self, image = None):
         im = cv2.imread('threshold_map_127.jpg')
         imgray = cv2.cvtColor(im, cv2.COLOR_BGR2GRAY)
@@ -195,31 +264,70 @@ class test():
         # wk = cv2.waitKey(0) & 0xFF
         # if wk == 27:
         #     cv2.destroyAllWindows()
+
+    def template(self):
+        img_rgb = cv2.imread('blurred and done.jpg')
+        img_gray = cv2.cvtColor(img_rgb, cv2.COLOR_BGR2GRAY)
+        template = cv2.imread('box.png',0)
+        w, h = template.shape[::-1]
+        
+        res = cv2.matchTemplate(img_gray,template,cv2.TM_CCOEFF_NORMED)
+        threshold = 0.8
+        loc = np.where( res >= threshold)
+        for pt in zip(*loc[::-1]):
+            cv2.rectangle(img_rgb, pt, (pt[0] + w, pt[1] + h), (0,0,255), 2)
+
+        cv2.imwrite('res.png',img_rgb)
+
+    def orb_test(self):
+        img = cv2.imread('box_erosion.png',0)
+        orb = cv2.ORB_create()
+        print([method_name for method_name in dir(orb)
+                  if callable(getattr(orb, method_name))])
+        orb.setEdgeThreshold(10)
+        #orb.setScoreType(1)
+        #print(orb.getScoreType)
+        kp = orb.detect(img,None)
+
+        # compute the descriptors with ORB
+        kp, des = orb.compute(img, kp)
+
+        # draw only keypoints location,not size and orientation
+        img2 = cv2.drawKeypoints(img,kp,None ,color=(0,255,0), flags=0)
+        plt.imshow(img2),plt.show()
 #################################################################################
 ############################################################################################################################
 ############################################################################################################################
 
     def image_processing(self):
-        # time.sleep(3)
-        # mapimg = np.reshape(np.frombuffer(self.c.slam_data_model.mapbytes, dtype=np.uint8), (self.MAP_SIZE_PIXELS, self.MAP_SIZE_PIXELS))
-        # cv2.imwrite('map.jpg', mapimg)
+        #self.blur()
+        #self.feature_detection()
 
-        self.feature_detection()
-        # self.hough_transform()
+        #self.orb_test()
+        #self.template()
+        #self.contours()
+        #self.feature_detection()
+        #self.hough_transform()
+        #self.canny()
         # img = cv2.imread('map.jpg', 0)
         # self.thresholding(img)
         # self.contours()
-
-        # img = cv2.imread('map.jpg', 0)
-        # self.original_img = img
-        # self.images = {"Original" : self.original_img}
-        # # a = self.remove_isolated_pixels(img)
         
-        # t_map = self.thresholding()
-        # d_map = self.dilation(t_map)
-        # t_e_map = self.erosion(d_map)
+        # img = cv2.imread('map.jpg', 0)
+        
+        # # # a = self.remove_isolated_pixels(img)
+        
+        # time.sleep(3)
+        mapimg = np.reshape(np.frombuffer(self.c.slam_data_model.mapbytes, dtype=np.uint8), (self.MAP_SIZE_PIXELS, self.MAP_SIZE_PIXELS))
+        cv2.imwrite('map_{}.jpg'.format(self.time), mapimg)
+        self.original_img = mapimg
+        # self.images = {"Original" : self.original_img}
+        t_map = self.thresholding()
+        d_map = self.dilation(t_map)
+        t_e_map = self.erosion(d_map)
         # #c_map = self.canny(t_e_map)
-        # blur = self.blur(t_e_map)
+        blur = self.blur(t_e_map)
+        self.find_spot()
 
         # #self.images = {"Blurred" : blur}
         print("---------------------------------------------------------------------")
@@ -230,18 +338,21 @@ class test():
         #self.show_image()
 
     def start_SLAM(self):
-        self.image_processing()
-        print("done")
         #threading.Thread(target=self.image_processing, daemon=False).start()
-        # while True:
-        #     if self.c.slam_data_model.x is not None:
-        #         print("X: {}, Y: {}".format(int(self.c.slam_data_model.x/100), int(self.c.slam_data_model.y/100)))
-        #         if not self.viz.display(self.c.slam_data_model.x/1000., self.c.slam_data_model.y/1000., 1, self.c.slam_data_model.mapbytes):
-        #             self.image_processing()
-        #             exit(0)
+        self.time = 0
+        for i in range(10):
+            
+            if self.c.slam_data_model.x is not None:
+                if not self.viz.display(self.c.slam_data_model.x/1000., self.c.slam_data_model.y/1000., 1, self.c.slam_data_model.mapbytes):
+                    exit(0)
+                else:
+                    self.time += 1
+                    self.image_processing()
+                    time.sleep(1)
                     
-        #     else:
-        #         time.sleep(1)
+                    
+            else:
+                time.sleep(1)
 
 if __name__ == '__main__':
     t = test()
