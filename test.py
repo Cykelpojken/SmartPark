@@ -14,6 +14,7 @@ class test():
 
     MAP_SIZE_PIXELS         = cfg.MAP_SIZE_PIXELS
     MAP_SIZE_METERS         = cfg.MAP_SIZE_METERS
+    MAP_SIZE_PIXELS_1       = 1118
     SCALE_PERCENT           = 50
     ALPHA_CONTRAST          = 1.5
     BETA_BRIGHTNESS         = 0
@@ -22,14 +23,16 @@ class test():
     EROSION                 = 2 #Iteration. More means thicker
     DILATION                = 2 #Iteration. More means more is removed
 
-    viz = MapVisualizer(MAP_SIZE_PIXELS, MAP_SIZE_METERS, 'SLAM')
+    SAVE_PICTURES           = False
+    DEFAULT_SLAM_MAP        = False
+
     c = CarController("localhost")
 
 
     def __init__(self):
+        self.viz = MapVisualizer(self.MAP_SIZE_PIXELS, self.MAP_SIZE_PIXELS, self.MAP_SIZE_METERS, 'SLAM') if self.DEFAULT_SLAM_MAP else MapVisualizer(self.MAP_SIZE_PIXELS, self.MAP_SIZE_PIXELS_1, self.MAP_SIZE_METERS, 'SLAM')
         self.start_SLAM()
     
-
     def draw_corners(self, img = None):
         if img is None:
             img = cv2.imread('erosion.jpg', cv2.COLOR_BGR2GRAY)
@@ -73,7 +76,8 @@ class test():
         if img is None:
             img = cv2.imread("map_{}.jpg".format(self.time))
         ret,thresh1 = cv2.threshold(img,self.THRESHOLD,255,cv2.THRESH_BINARY)
-        cv2.imwrite('threshold_{}.jpg'.format(self.time), thresh1)
+        if self.SAVE_PICTURES: 
+            cv2.imwrite('threshold_{}.jpg'.format(self.time), thresh1)
 
         return thresh1
             
@@ -108,7 +112,8 @@ class test():
         if img is None:
             img = self.original_img
         img_erosion = cv2.erode(img, kernel, iterations=self.EROSION) 
-        cv2.imwrite("erosion_{}.jpg".format(self.time), img_erosion)
+        if self.SAVE_PICTURES:
+            cv2.imwrite("erosion_{}.jpg".format(self.time), img_erosion)
         return img_erosion
     
     def dilation(self, img = None):
@@ -116,7 +121,8 @@ class test():
         if img is None:
             img = self.original_img
         img_dilation = cv2.dilate(img, kernel, iterations=self.DILATION) 
-        cv2.imwrite("dilation_{}.jpg".format(self.time), img_dilation)
+        if self.SAVE_PICTURES:
+            cv2.imwrite("dilation_{}.jpg".format(self.time), img_dilation)
         return img_dilation
     
     def blur(self, img = None):
@@ -124,7 +130,8 @@ class test():
             img = cv2.imread("erosion.jpg", 0)
         
         blur = cv2.GaussianBlur(img,(7,7),cv2.BORDER_DEFAULT)
-        cv2.imwrite("blurred_{}.jpg".format(self.time), blur)
+        if self.SAVE_PICTURES:
+            cv2.imwrite("blurred_{}.jpg".format(self.time), blur)
         return blur
 
     def remove_isolated_pixels(self, image):
@@ -169,16 +176,18 @@ class test():
 
         plt.imshow(img3),plt.show()
 
-    def find_spot(self): #NOT WORKING
-        MIN_MATCH_COUNT = 5
+    def find_spot(self, img = None): #Working well ish
+        MIN_MATCH_COUNT = 4
 
         img1 = cv2.imread('box.png',0)          # queryImage
-        img2 = cv2.imread('blurred_{}.jpg'.format(self.time),0) # trainImage
+        if img is None:
+            img = cv2.imread('blurred_{}.jpg'.format(self.time),0) # trainImage
+        img2 = img
+       
 
         # Initiate SIFT detector
         sift = cv2.xfeatures2d.SIFT_create()
-        print([method_name for method_name in dir(sift)
-                  if callable(getattr(sift, method_name))])
+
         # find the keypoints and descriptors with SIFT
         kp1, des1 = sift.detectAndCompute(img1,None)
         kp2, des2 = sift.detectAndCompute(img2,None)
@@ -188,6 +197,9 @@ class test():
         search_params = dict(checks = 50)
 
         flann = cv2.FlannBasedMatcher(index_params, search_params)
+
+        # if(des2.type()!=CV_32F):
+        #     des2.convertTo(des2, CV_32F)
 
         matches = flann.knnMatch(des1,des2,k=2)
 
@@ -201,22 +213,23 @@ class test():
         if len(good)>MIN_MATCH_COUNT:
             src_pts = np.float32([ kp1[m.queryIdx].pt for m in good ]).reshape(-1,1,2)
             dst_pts = np.float32([ kp2[m.trainIdx].pt for m in good ]).reshape(-1,1,2)
-            print(src_pts)
 
             M, mask = cv2.findHomography(src_pts, dst_pts, cv2.RANSAC,5.0)
             matchesMask = mask.ravel().tolist()
             h,w = img1.shape
             pts = np.float32([ [0,0],[0,h-1],[w-1,h-1],[w-1,0] ]).reshape(-1,1,2)
             #pts = np.float32([pts])
-            dst = cv2.perspectiveTransform(pts,M)
+            if M is not None and pts is not None:
+                dst = cv2.perspectiveTransform(pts,M)
+                img2 = cv2.polylines(img2,[np.int32(dst)],True,50,3, cv2.LINE_AA)
+            else:
+                print("got a bad frame")
             
-
-            img2 = cv2.polylines(img2,[np.int32(dst)],True,50,3, cv2.LINE_AA)
             #plt.imshow(img2, 'gray'),plt.show()
 
 
         else:
-            print("Not enough matches are found - %d/%d" % (len(good),MIN_MATCH_COUNT))
+            #print("Not enough matches are found - %d/%d" % (len(good),MIN_MATCH_COUNT))
             matchesMask = None
 
         draw_params = dict(matchColor = (0,255,0), # draw matches in green color
@@ -225,9 +238,14 @@ class test():
                    flags = 2)
 
         img3 = cv2.drawMatches(img1,kp1,img2,kp2,good,None,**draw_params)
-        cv2.imwrite("identified_{}.jpg".format(self.time), img3)
+
+        img3 = img3[:,:,0]
+
+        if self.SAVE_PICTURES:
+            cv2.imwrite("identified_{}.jpg".format(self.time), img3)
         #plt.imshow(img3, 'gray'),plt.show()
-                   
+        return img3
+                         
     def hough_transform(self, image = None):
         img = cv2.imread('blurred and done.jpg')
         gray = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
@@ -300,55 +318,39 @@ class test():
 ############################################################################################################################
 
     def image_processing(self):
-        #self.blur()
-        #self.feature_detection()
-
-        #self.orb_test()
-        #self.template()
-        #self.contours()
-        #self.feature_detection()
-        #self.hough_transform()
-        #self.canny()
-        # img = cv2.imread('map.jpg', 0)
-        # self.thresholding(img)
-        # self.contours()
-        
-        # img = cv2.imread('map.jpg', 0)
-        
-        # # # a = self.remove_isolated_pixels(img)
-        
-        # time.sleep(3)
         mapimg = np.reshape(np.frombuffer(self.c.slam_data_model.mapbytes, dtype=np.uint8), (self.MAP_SIZE_PIXELS, self.MAP_SIZE_PIXELS))
         cv2.imwrite('map_{}.jpg'.format(self.time), mapimg)
-        self.original_img = mapimg
-        # self.images = {"Original" : self.original_img}
-        t_map = self.thresholding()
-        d_map = self.dilation(t_map)
-        t_e_map = self.erosion(d_map)
-        # #c_map = self.canny(t_e_map)
-        blur = self.blur(t_e_map)
-        self.find_spot()
+        # self.original_img = mapimg
 
-        # #self.images = {"Blurred" : blur}
-        print("---------------------------------------------------------------------")
-        #self.draw_corners(t_map)
-        print("---------------------------------------------------------------------")
-        #time.sleep(123)
+        # t_map = self.thresholding()
+        # d_map = self.dilation(t_map)
+        # t_e_map = self.erosion(d_map)
+        # blur = self.blur(t_e_map)
+        # identified = self.find_spot(blur)
 
-        #self.show_image()
+
 
     def start_SLAM(self):
-        #threading.Thread(target=self.image_processing, daemon=False).start()
         self.time = 0
-        for i in range(10):
-            
+        while True:
             if self.c.slam_data_model.x is not None:
-                if not self.viz.display(self.c.slam_data_model.x/1000., self.c.slam_data_model.y/1000., 1, self.c.slam_data_model.mapbytes):
+                t1 = time.time()
+                mapimg = np.reshape(np.frombuffer(self.c.slam_data_model.mapbytes, dtype=np.uint8), (self.MAP_SIZE_PIXELS, self.MAP_SIZE_PIXELS))
+                t_map = self.thresholding(mapimg)
+                d_map = self.dilation(t_map)
+                t_e_map = self.erosion(d_map)
+                blur = self.blur(t_e_map)
+                identified = self.find_spot(blur)
+                t2 = time.time()
+                identified = identified.copy(order='C')
+                
+                print(t2-t1)
+                
+                if not self.viz.display(self.c.slam_data_model.x/1000., self.c.slam_data_model.y/1000., 1, identified):
                     exit(0)
                 else:
-                    self.time += 1
-                    self.image_processing()
-                    time.sleep(1)
+                    #self.image_processing()
+                    time.sleep(0.1)
                     
                     
             else:
