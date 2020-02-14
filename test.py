@@ -24,7 +24,7 @@ class test():
     DILATION                = 2 #Iteration. More means more is removed
 
     SAVE_PICTURES           = False
-    DEFAULT_SLAM_MAP        = False
+    DEFAULT_SLAM_MAP        = True
 
     c = CarController("localhost")
 
@@ -180,8 +180,9 @@ class test():
         MIN_MATCH_COUNT = 4
 
         img1 = cv2.imread('box.png',0)          # queryImage
-        if img is None:
-            img = cv2.imread('blurred_{}.jpg'.format(self.time),0) # trainImage
+        #if img is None:
+            #img = cv2.imread('blurred_{}.jpg'.format(self.time),0) # trainImage
+        img = cv2.imread('blurred.jpg',0) # trainImage
         img2 = img
        
 
@@ -218,10 +219,16 @@ class test():
             matchesMask = mask.ravel().tolist()
             h,w = img1.shape
             pts = np.float32([ [0,0],[0,h-1],[w-1,h-1],[w-1,0] ]).reshape(-1,1,2)
+            pts2 = np.float32([[15,50],[40,50], [40,70], [15,70]]).reshape(-1,1,2)
             #pts = np.float32([pts])
             if M is not None and pts is not None:
                 dst = cv2.perspectiveTransform(pts,M)
+                dst2 = cv2.perspectiveTransform(pts2,M)
+                #print(np.int32(dst))
+                print(np.int32(dst2))
                 img2 = cv2.polylines(img2,[np.int32(dst)],True,50,3, cv2.LINE_AA)
+                img2 = cv2.polylines(img2,[np.int32(dst2)],True,50,2, cv2.LINE_AA)
+                cv2.imwrite("asd.jpg", img2)
             else:
                 print("got a bad frame")
             
@@ -244,14 +251,91 @@ class test():
         if self.SAVE_PICTURES:
             cv2.imwrite("identified_{}.jpg".format(self.time), img3)
         #plt.imshow(img3, 'gray'),plt.show()
+        cv2.imwrite("identified.jpg", img3)
+
         return img3
-                         
-    def hough_transform(self, image = None):
-        img = cv2.imread('blurred and done.jpg')
+                                                  
+    def find_spot_surf_bf(self, img = None):
+        MIN_MATCH_COUNT = 1
+
+        img1 = cv2.imread('box.png',0)          # queryImage
+        #if img is None:
+            #img = cv2.imread('blurred_{}.jpg'.format(self.time),0) # trainImage
+        img = cv2.imread('blurred.jpg',0) # trainImage
+        img2 = img
+       
+
+        # Initiate SIFT detector
+        sift = cv2.xfeatures2d.SURF_create()
+
+        # find the keypoints and descriptors with SIFT
+        kp1, des1 = sift.detectAndCompute(img1,None)
+        kp2, des2 = sift.detectAndCompute(img2,None)
+
+        # create BFMatcher object
+        bf = cv2.BFMatcher()
+
+        # Match descriptors.
+        matches = bf.knnMatch(des1,des2, k=2)
+
+        # Sort them in the order of their distance.
+        #matches = sorted(matches, key = lambda x:x.distance)
+
+        # store all the good matches as per Lowe's ratio test.
+        good = []
+        for m,n in matches:
+            if m.distance < 0.70*n.distance:
+                good.append(m)
+
+
+        if len(good)>MIN_MATCH_COUNT:
+            print("asd")
+            src_pts = np.float32([ kp1[m.queryIdx].pt for m in good ]).reshape(-1,1,2)
+            dst_pts = np.float32([ kp2[m.trainIdx].pt for m in good ]).reshape(-1,1,2)
+
+            M, mask = cv2.findHomography(src_pts, dst_pts) #cv2.RANSAC,5.0)
+            matchesMask = mask.ravel().tolist()
+            h,w = img1.shape
+            pts = np.float32([ [0,0],[0,h-1],[w-1,h-1],[w-1,0] ]).reshape(-1,1,2)
+            #pts = np.float32([pts])
+            if M is not None and pts is not None:
+                dst = cv2.perspectiveTransform(pts,M)
+                img2 = cv2.polylines(img2,[np.int32(dst)],True,50,3, cv2.LINE_AA)
+            else:
+                print("got a bad frame")
+            
+            #plt.imshow(img2, 'gray'),plt.show()
+
+
+        else:
+            #print("Not enough matches are found - %d/%d" % (len(good),MIN_MATCH_COUNT))
+            matchesMask = None
+
+        draw_params = dict(matchColor = (0,255,0), # draw matches in green color
+                   singlePointColor = None,
+                   matchesMask = matchesMask, # draw only inliers
+                   flags = 2)
+
+        img3 = cv2.drawMatchesKnn(img1,kp1,img2,kp2,matches,None,flags=2)
+
+        img3 = img3[:,:,0]
+
+        if self.SAVE_PICTURES:
+            cv2.imwrite("identified_{}.jpg".format(self.time), img3)
+        #plt.imshow(img3, 'gray'),plt.show()
+        cv2.imwrite("identified.jpg", img3)
+
+        return img3
+  
+    def hough_transform(self, img = None): 
+        img = cv2.imread('box.png')
         gray = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
         edges = cv2.Canny(gray,50,150,apertureSize = 3)
 
-        lines = cv2.HoughLines(edges,1,np.pi/180,1)
+        lines = cv2.HoughLines(image = edges,
+                               rho = 4,
+                               theta = np.pi/180,
+                               threshold = 1)
         for rho,theta in lines[0]:
             a = np.cos(theta)
             b = np.sin(theta)
@@ -332,29 +416,33 @@ class test():
 
     def start_SLAM(self):
         self.time = 0
-        while True:
-            if self.c.slam_data_model.x is not None:
-                t1 = time.time()
-                mapimg = np.reshape(np.frombuffer(self.c.slam_data_model.mapbytes, dtype=np.uint8), (self.MAP_SIZE_PIXELS, self.MAP_SIZE_PIXELS))
-                t_map = self.thresholding(mapimg)
-                d_map = self.dilation(t_map)
-                t_e_map = self.erosion(d_map)
-                blur = self.blur(t_e_map)
-                identified = self.find_spot(blur)
-                t2 = time.time()
-                identified = identified.copy(order='C')
+        t1 = time.time()
+        self.find_spot()
+        t2 = time.time()
+        print(t2-t1)
+        # while True:
+        #     if self.c.slam_data_model.x is not None:
+        #         # t1 = time.time()
+        #         mapimg = np.reshape(np.frombuffer(self.c.slam_data_model.mapbytes, dtype=np.uint8), (self.MAP_SIZE_PIXELS, self.MAP_SIZE_PIXELS))
+        #         # t_map = self.thresholding(mapimg)
+        #         # d_map = self.dilation(t_map)
+        #         # t_e_map = self.erosion(d_map)
+        #         # blur = self.blur(t_e_map)
+        #         identified = self.find_spot()
+        #         # t2 = time.time()
+        #         identified = identified.copy(order='C')
+        #         #self.hough_transform()
+        #         #print(t2-t1)
                 
-                print(t2-t1)
-                
-                if not self.viz.display(self.c.slam_data_model.x/1000., self.c.slam_data_model.y/1000., 1, identified):
-                    exit(0)
-                else:
-                    #self.image_processing()
-                    time.sleep(0.1)
+        #         if not self.viz.display(self.c.slam_data_model.x/1000., self.c.slam_data_model.y/1000., 1, mapimg):
+        #             exit(0)
+        #         else:
+        #             #self.image_processing()
+        #             time.sleep(100)
                     
                     
-            else:
-                time.sleep(1)
+        #     else:
+        #         time.sleep(1)
 
 if __name__ == '__main__':
     t = test()
