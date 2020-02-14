@@ -420,29 +420,5 @@ class test():
         self.find_spot()
         t2 = time.time()
         print(t2-t1)
-        # while True:
-        #     if self.c.slam_data_model.x is not None:
-        #         # t1 = time.time()
-        #         mapimg = np.reshape(np.frombuffer(self.c.slam_data_model.mapbytes, dtype=np.uint8), (self.MAP_SIZE_PIXELS, self.MAP_SIZE_PIXELS))
-        #         # t_map = self.thresholding(mapimg)
-        #         # d_map = self.dilation(t_map)
-        #         # t_e_map = self.erosion(d_map)
-        #         # blur = self.blur(t_e_map)
-        #         identified = self.find_spot()
-        #         # t2 = time.time()
-        #         identified = identified.copy(order='C')
-        #         #self.hough_transform()
-        #         #print(t2-t1)
-                
-        #         if not self.viz.display(self.c.slam_data_model.x/1000., self.c.slam_data_model.y/1000., 1, mapimg):
-        #             exit(0)
-        #         else:
-        #             #self.image_processing()
-        #             time.sleep(100)
-                    
-                    
-        #     else:
-        #         time.sleep(1)
-
 if __name__ == '__main__':
     t = test()
