@@ -5,6 +5,8 @@ import image_processing as ip
 import time
 import cv2
 import zmq
+import struct
+
 
 MAP_SIZE_PIXELS         = cfg.MAP_SIZE_PIXELS
 
@@ -21,17 +23,15 @@ while True:
         d_map = ip.dilation(t_map)
         t_e_map =  ip.erosion(d_map)
         blur = ip.blur(t_e_map)
-        identified, coordinates = ip.find_spot(blur)
-        display_image = identified
+        #identified, coordinates = ip.find_spot(blur)
+        #display_image = identified
         print("X: {}".format(c.slam_data_model.x/100))
         print("Y: {}".format(c.slam_data_model.y/100))
-        send_bytes = display_image.shape[0].to_bytes(2, 'big') + display_image.shape[1].to_bytes(2, 'big') + display_image.tobytes()
+        print("Theta: {}".format(c.slam_data_model.theta))
+        print("-----------------------------------------")
+        send_bytes = display_image.shape[0].to_bytes(2, 'big') + display_image.shape[1].to_bytes(2, 'big') + bytearray(struct.pack("f", c.slam_data_model.theta)) + display_image.tobytes()
         socket.send(send_bytes)
-        print("sent image")
-
         time.sleep(0.1)
-
-    
     else:
         print("sleeping 1 sec")
         time.sleep(1)
