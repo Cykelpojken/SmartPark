@@ -22,8 +22,8 @@ while True:
         t_map = ip.thresholding(mapimg)
         d_map = ip.dilation(t_map)
         e_map =  ip.erosion(d_map)
-        blur = ip.blur(e_map, 7)
-        #identified, coordinates = ip.find_spot(blur)
+        blur = ip.blur(e_map, 3, 0)
+        identified, coordinates = ip.find_spot(blur)
         display_image = identified
         #print(identified)
         # print(display_image.shape[0])
@@ -43,6 +43,6 @@ while True:
         # e_map =  ip.erosion(d_map)
         # blur = ip.blur(e_map)
         # identified, coordinates = ip.find_spot(blur)
-        ip.find_spot()
+        #ip.find_spot()
         print("sleeping 1 sec")
         time.sleep(1)

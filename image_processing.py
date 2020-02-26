@@ -6,7 +6,7 @@ from matplotlib import pyplot as plt
 THRESHOLD               = 100 #less means more stricts
 EROSION                 = 2 #Iteration. More means thicker
 DILATION                = 2 #Iteration. More means more is removed
-MIN_MATCH_COUNT         = 2
+MIN_MATCH_COUNT         = 8
 SURF                    = True
 SAVE_PICTURES           = False
 def thresholding(img):
@@ -45,23 +45,31 @@ def find_spot(img=None): #Working well ish
     img = cv2.imread('erosion.jpg', 0)
     img = blur(img, 3, 0)
 
-    box = cv2.imread('erosion_box.png',0) # queryImage
+    box = cv2.imread('test.png',0) # queryImage
     box = blur(box, 3, 0) #5 here 5 other both 0 works ok
 
     # Initiate surf detector
-    surf = cv2.xfeatures2d.SURF_create(2000*1.3) if SURF else cv2.xfeatures2d.SIFT_create()
+    surf = cv2.xfeatures2d.SURF_create(2000*2) if SURF else cv2.xfeatures2d.SIFT_create() #
 
     # find the keypoints and descriptors with surf
     kp1, des1 = surf.detectAndCompute(box,None)
     kp2, des2 = surf.detectAndCompute(img,None)
 
-    FLANN_INDEX_KDTREE = 0
+    '''FLANN_INDEX_KDTREE = 0
     index_params = dict(algorithm = FLANN_INDEX_KDTREE, trees = 5)
     search_params = dict(checks = 50)
 
     flann = cv2.FlannBasedMatcher(index_params, search_params)
 
-    matches = flann.knnMatch(des1,des2,k=2)
+    matches = flann.knnMatch(des1,des2,k=2)'''
+    bf = cv2.BFMatcher()
+    matches = bf.knnMatch(des1,des2,k=2)
+    # Apply ratio test
+    good = []
+    '''for m,n in matches:
+        if m.distance < 0.75*n.distance:
+            good.append([m])'''
+
 
     # store all the good matches as per Lowe's ratio test.
     good = []
@@ -73,9 +81,9 @@ def find_spot(img=None): #Working well ish
         print(len(good))
         src_pts = np.float32([ kp1[m.queryIdx].pt for m in good ]).reshape(-1,1,2)
         dst_pts = np.float32([ kp2[m.trainIdx].pt for m in good ]).reshape(-1,1,2)
-        #print(dst_pts)
-        #print(src_pts, dst_pts)
-        M, mask = cv2.findHomography(src_pts, dst_pts, cv2.RANSAC,5.0)
+        print(len(src_pts))
+        print(len(dst_pts))
+        M, mask = cv2.findHomography(src_pts, dst_pts, method = cv2.RANSAC, ransacReprojThreshold = 5, maxIters = 2000, confidence = 0.999)
         #print(M)
         matchesMask = mask.ravel().tolist()
         h,w = box.shape
@@ -93,6 +101,7 @@ def find_spot(img=None): #Working well ish
             x = (dst2[0][0][0] + dst2[1][0][0]) / 2 
             y = (dst2[2][0][0] + dst2[3][0][0]) / 2 
             parking_coordinates = (x,y)
+            print(x,y)
 
         else:
             print("M: " + str(M))
