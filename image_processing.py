@@ -38,14 +38,12 @@ def blur(img = None, threshold = 3, t = cv2.BORDER_DEFAULT):
     return blur
 
 def find_spot(img=None): #Working well ish
-    #print(img)
-    
     parking_coordinates = None
 
-    img = cv2.imread('erosion.jpg', 0)
-    img = blur(img, 3, 0)
+    # img = cv2.imread('erosion.jpg', 0)
+    # img = blur(img, 3, 0)
 
-    box = cv2.imread('test.png',0) # queryImage
+    box = cv2.imread('box.png',0) # queryImage
     box = blur(box, 3, 0) #5 here 5 other both 0 works ok
 
     # Initiate surf detector
@@ -55,22 +53,10 @@ def find_spot(img=None): #Working well ish
     kp1, des1 = surf.detectAndCompute(box,None)
     kp2, des2 = surf.detectAndCompute(img,None)
 
-    '''FLANN_INDEX_KDTREE = 0
-    index_params = dict(algorithm = FLANN_INDEX_KDTREE, trees = 5)
-    search_params = dict(checks = 50)
-
-    flann = cv2.FlannBasedMatcher(index_params, search_params)
-
-    matches = flann.knnMatch(des1,des2,k=2)'''
     bf = cv2.BFMatcher()
     matches = bf.knnMatch(des1,des2,k=2)
     # Apply ratio test
     good = []
-    '''for m,n in matches:
-        if m.distance < 0.75*n.distance:
-            good.append([m])'''
-
-
     # store all the good matches as per Lowe's ratio test.
     good = []
     for m,n in matches:
@@ -78,25 +64,22 @@ def find_spot(img=None): #Working well ish
             good.append(m)
 
     if len(good)>MIN_MATCH_COUNT:
-        print(len(good))
         src_pts = np.float32([ kp1[m.queryIdx].pt for m in good ]).reshape(-1,1,2)
         dst_pts = np.float32([ kp2[m.trainIdx].pt for m in good ]).reshape(-1,1,2)
-        print(len(src_pts))
-        print(len(dst_pts))
+
         M, mask = cv2.findHomography(src_pts, dst_pts, method = cv2.RANSAC, ransacReprojThreshold = 5, maxIters = 2000, confidence = 0.999)
-        #print(M)
+
         matchesMask = mask.ravel().tolist()
         h,w = box.shape
-        #print(box.shape)
+
         pts = np.float32([ [0,0],[0,h-1],[w-1,h-1],[w-1,0] ]).reshape(-1,1,2)
-        pts2 = np.float32([[15,50],[40,50], [40,70], [15,70]]).reshape(-1,1,2)
+        pts2 = np.float32([[10,5], [30,5], [30, 20], [10, 20]]).reshape(-1,1,2)
 
         if M is not None and pts is not None:
             dst = cv2.perspectiveTransform(pts,M)
             dst2 = cv2.perspectiveTransform(pts2,M)
             img = cv2.polylines(img,[np.int32(dst)],True,50,3, cv2.LINE_AA)
             img = cv2.polylines(img,[np.int32(dst2)],True,50,2, cv2.LINE_AA)
-            cv2.imwrite("asd.jpg", img)
 
             x = (dst2[0][0][0] + dst2[1][0][0]) / 2 
             y = (dst2[2][0][0] + dst2[3][0][0]) / 2 
@@ -104,8 +87,6 @@ def find_spot(img=None): #Working well ish
             print(x,y)
 
         else:
-            print("M: " + str(M))
-            #print("pts: " + str(pts))
             print("got a bad frame")
 
     else:
@@ -117,13 +98,12 @@ def find_spot(img=None): #Working well ish
                 flags = 2)
 
     img3 = cv2.drawMatches(box,kp1,img,kp2,good,None,**draw_params)
-    #plt.imshow(img3),plt.show()
+
 
     img3 = img3[:,:,0]
 
     if SAVE_PICTURES:
         cv2.imwrite("identified.jpg", img3)
-        #plt.imshow(img3),plt.show()
     cv2.imwrite("identified.jpg", img3)
 
     return img3, parking_coordinates
