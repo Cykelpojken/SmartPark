@@ -217,7 +217,7 @@ def getend():
     return end_point
 
 
-img = cv2.imread("test2.png", cv2.IMREAD_GRAYSCALE)
+img = cv2.imread("Pathfollower/test2.png", cv2.IMREAD_GRAYSCALE)
 _, img = cv2.threshold(img, 120, 255, cv2.THRESH_BINARY)
 img = cv2.cvtColor(img, cv2.COLOR_GRAY2BGR)
 matrix = img[:,:,0]
@@ -238,9 +238,12 @@ while p < 2:
     pass
 t1= time.time()
 waypojk = astar(matrix, start, end)
+cv2.destroyAllWindows()
+time.sleep(2)
 t2 = time.time()
 #print(t2 - t1)
 #waypojk = BFS(start, end)
 #astar(matrix, start, end)
 
-cv2.waitKey(0)
+#cv2.waitKey(0)
+#time.sleep(2)

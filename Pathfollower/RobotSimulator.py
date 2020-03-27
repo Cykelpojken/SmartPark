@@ -3,8 +3,7 @@ import math
 import numpy as np
 import cv2
 import time
-#import statistics
-
+from Pathfollower import PathGenerator
 distances = []
 
 def Average(lst): 
@@ -77,6 +76,7 @@ def draw_path(img):
 
 def draw_robot(img):
     tmp = img.copy()
+    print (tmp[0][0])
     cv2.drawContours(tmp, [np.array([((pos[0]+length/2*math.sin(angle)-width/2*math.cos(angle))*scaler,
                                       (pos[1]+length/2*math.cos(angle)+width/2*math.sin(angle))*scaler),
                                      ((pos[0]+length/2*math.sin(angle)+width/2*math.cos(angle))*scaler,
@@ -131,10 +131,11 @@ def click(event, x, y, flags, param):
 
 
 config = configparser.ConfigParser()
-config.read("config.ini")
+config.read("Pathfollower/config.ini")
 
-with open(config["PATH"]["FILE_LOCATION"]) as file:
-    path = [([float(x) for x in line.split(",")]) for line in file.readlines()]
+path = PathGenerator.finalpath
+#with open(config["PATH"]["FILE_LOCATION"]) as file:
+#    path = [([float(x) for x in line.split(",")]) for line in file.readlines()]
 
 
 scaler = float(config["FIELD_IMAGE"]["PIXELS_PER_UNIT"])
@@ -150,40 +151,47 @@ wheels = [0,0]
 dt=0.005
 
 field = cv2.imread(config["FIELD_IMAGE"]["FILE_LOCATION"])
+print("image_read")
 scale_multiplier = 2
 width2 = int(field.shape[1] * scale_multiplier)
 height2 = int(field.shape[0] * scale_multiplier)
 dim = (width2, height2)
 resized = cv2.resize(field, dim, interpolation = cv2.INTER_AREA)
 img = resized
+print("image_resized")
 #img = np.zeros((resized.shape[0], resized.shape[1], 3), np.uint8)
 start_pos = (path[0][0], path[0][1]) #(resized.shape[0]/2, resized.shape[1]/2)
 draw_path(img)
+print("Rita path")
 #print(start_pos)
 #print(scaler)
 cv2.imshow("img", img)
+print("Showimg")
 cv2.setMouseCallback('img', click)
+print("wait4click")
 cv2.waitKey(5)
-
+print("waaiit")
 itt = 0
 t1= time.time()
 while closest() != len(path)-1:
-
+    print("Loopa")
     look = lookahead()
     close = closest()
     curv = curvature(look) if t_i>close else 0.00001 
     vel = path[close][2]
+    print("senare i loopen")
     last_wheels = wheels
     wheels = turn(curv, vel, width)
 
     for i, w in enumerate(wheels):
         wheels[i] = last_wheels[i] + min(float(config["ROBOT"]["MAX_VEL_CHANGE"])*dt, max(-float(config["ROBOT"]["MAX_VEL_CHANGE"])*dt, w-last_wheels[i]))
-
+        print("loopa för wheels")
     pos = (pos[0] + (wheels[0]+wheels[1])/2*dt * math.sin(angle), pos[1] + (wheels[0]+wheels[1])/2*dt * math.cos(angle))
     angle += math.atan((wheels[0]-wheels[1])/width*dt)
     #print(str(wheels) + ", " + str(angle))
     #time.sleep(0.05)
     draw_robot(img)
+    print("Robot draw")
     itt += 1
 t2= time.time()
 print("done")

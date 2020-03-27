@@ -2,7 +2,7 @@ import cv2
 import configparser
 import math
 import sys
-import pathfinder3
+from Pathfollower import pathfinder3
 # HANDLE MOUSE EVENTS FOR SELECTION
 def click(event, x, y, flags, param):
     global waypoints, img, start_pos, mouse_down
@@ -45,8 +45,8 @@ mouse_down = False
 
 # READ CONFIG FILE
 config = configparser.ConfigParser()
-config.read("config.ini")
-scaler = float(config["FIELD_IMAGE"]["PIXELS_PER_UNIT"])
+config.read("Pathfollower/config.ini")
+scaler = 1.0 #float(config["FIELD_IMAGE"]["PIXELS_PER_UNIT"])
 
 # READ & SHOW IMAGE, SET OPENCV PROPERTIES
 #img = cv2.imread(config["FIELD_IMAGE"]["FILE_LOCATION"])
@@ -127,10 +127,11 @@ for i, w in enumerate(smooth_waypoints[1:], start=1):
     else:
         break
 
+finalpath = smooth_waypoints
 # WRITE RESULTS TO FILE
-with open(config["PATH"]["FILE_LOCATION"], "w+") as file:
-    for w in smooth_waypoints:
-        file.write(str(w[0]) + "," + str(w[1]) + "," + str(w[5]) + "\n")
+#with open(config["PATH"]["FILE_LOCATION"], "w+") as file:
+#    for w in smooth_waypoints:
+#        file.write(str(w[0]) + "," + str(w[1]) + "," + str(w[5]) + "\n")
 
 '''
 # DISPLAY COLOR-CODED IMAGE OF PATH
@@ -151,4 +152,4 @@ for i in range(1, len(smooth_waypoints)):
               255*smooth_waypoints[i - 1][5] / float(config["VELOCITY"]["MAX_VEL"])), 1)
 cv2.imshow("Field", img)
 '''
-cv2.waitKey()
+#cv2.waitKey()
