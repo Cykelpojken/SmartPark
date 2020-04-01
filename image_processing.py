@@ -7,10 +7,13 @@ THRESHOLD               = 100 #less means more stricts
 EROSION                 = 2 #Iteration. More means thicker
 DILATION                = 2 #Iteration. More means more is removed
 MIN_MATCH_COUNT         = 8
+BOXBLUR                 = 7
 SURF                    = True
-SAVE_PICTURES           = False
-def thresholding(img):
 
+
+SAVE_PICTURES           = True
+
+def thresholding(img):
         ret,thresh1 = cv2.threshold(img,THRESHOLD,255,cv2.THRESH_BINARY)
         if SAVE_PICTURES: 
             cv2.imwrite('threshold.jpg', thresh1)
@@ -31,7 +34,7 @@ def dilation(img):
             cv2.imwrite("dilation.jpg", img_dilation)
         return img_dilation
     
-def blur(img = None, threshold = 3, t = cv2.BORDER_DEFAULT):
+def blur(img = None, threshold = BOXBLUR, t = cv2.BORDER_DEFAULT):
     blur = cv2.GaussianBlur(img,(threshold,threshold),t)
     if SAVE_PICTURES:
         cv2.imwrite("blurred.jpg", blur)
@@ -73,19 +76,18 @@ def find_spot(img=None): #Working well ish
         h,w = box.shape
 
         pts = np.float32([ [0,0],[0,h-1],[w-1,h-1],[w-1,0] ]).reshape(-1,1,2)
-        pts2 = np.float32([[10,5], [30,5], [30, 20], [10, 20]]).reshape(-1,1,2)
+        pts2 = np.float32([[20,12.5]]).reshape(-1,1,2)
 
         if M is not None and pts is not None:
             dst = cv2.perspectiveTransform(pts,M)
             dst2 = cv2.perspectiveTransform(pts2,M)
             img = cv2.polylines(img,[np.int32(dst)],True,50,3, cv2.LINE_AA)
-            img = cv2.polylines(img,[np.int32(dst2)],True,50,2, cv2.LINE_AA)
-
-            x = (dst2[0][0][0] + dst2[1][0][0]) / 2 
-            y = (dst2[2][0][0] + dst2[3][0][0]) / 2 
-            parking_coordinates = (x,y)
-            print(x,y)
-
+            img = cv2.circle(img,(dst2[0][0][0], dst2[0][0][1]),5, (127, 0, 0), 3)
+            #print(dst2)
+            parking_coordinates = (dst2[0][0][0], dst2[0][0][1])
+            # print(dst2[0][0][1], dst2[3][0][1])
+            #parking_coordinates = (x,y)
+            cv2.imwrite("coordinates.png", img)
         else:
             print("got a bad frame")
 
@@ -98,12 +100,12 @@ def find_spot(img=None): #Working well ish
                 flags = 2)
 
     img3 = cv2.drawMatches(box,kp1,img,kp2,good,None,**draw_params)
+    #img3 = img
 
 
-    img3 = img3[:,:,0]
+    #img3 = img3[:,:,0]
 
     if SAVE_PICTURES:
         cv2.imwrite("identified.jpg", img3)
-    cv2.imwrite("identified.jpg", img3)
-
+ 
     return img3, parking_coordinates
