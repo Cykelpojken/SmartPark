@@ -23,5 +23,4 @@ def phase4(theta):
     pass
     # slight forward
 
-
 # tråd som kollar att vi alltid är en viss offset från väggarna?
