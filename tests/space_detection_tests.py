@@ -7,4 +7,4 @@ def test_answer(cmdopt):
     elif cmdopt == "type2":
         print("second")
         assert 1
-    #assert var == 1  # to see what was printed
+    # assert var == 1  # to see what was printed
