@@ -11,16 +11,16 @@ from rplidar import RPLidar as Lidar
 from breezyslam.algorithms import RMHC_SLAM
 from breezyslam.sensors import RPLidarA1 as LaserModel
 
-MAP_SIZE_PIXELS         = cfg.MAP_SIZE_PIXELS
-MAP_SIZE_METERS         = cfg.MAP_SIZE_METERS
-BLURMAP                 = 7
+MAP_SIZE_PIXELS = cfg.MAP_SIZE_PIXELS
+MAP_SIZE_METERS = cfg.MAP_SIZE_METERS
+BLURMAP = 7
 
 c = CarController(address='trevor.local')
 context = zmq.Context()
 socket = context.socket(zmq.PUB)
 socket.setsockopt(zmq.SNDHWM, 10)
 socket.bind("tcp://*:%s" % 5558)
-prev_cords = [0,0]
+prev_cords = [0, 0]
 
 MIN_SAMPLES = 20
 
@@ -38,7 +38,7 @@ iterator = lidar.iter_scans()
 
 # We will use these to store previous scan in case current scan is inadequate
 previous_distances = None
-previous_angles    = None
+previous_angles = None
 
 # First scan is crap, so ignore it
 next(iterator)
@@ -48,17 +48,16 @@ while True:
     # Extract (quality, angle, distance) triples from current scan
     items = [item for item in next(iterator)]
 
-
     # Extract distances and angles from triples
     distances = [item[2] for item in items]
-    angles    = [item[1] for item in items]
+    angles = [item[1] for item in items]
 
     # Update SLAM with current Lidar scan and scan angles if adequate
     if len(distances) > MIN_SAMPLES:
 
         slam.update(distances, scan_angles_degrees=angles)
         previous_distances = distances.copy()
-        previous_angles    = angles.copy()
+        previous_angles = angles.copy()
 
     # If not adequate, use previous
     elif previous_distances is not None:
@@ -70,22 +69,30 @@ while True:
     # Get current map bytes as grayscale
     slam.getmap(mapbytes)
 
-    #Display map and robot pose, exiting gracefully if user closes it
+    # Display map and robot pose, exiting gracefully if user closes it
     # if not (viz.display(x/1000., y/1000., -theta + 180, mapbytes)):
     #     exit(0)
     print("X: " + str(x/cfg.MAP_SIZE_METERS))
     print("Y:" + str(y/cfg.MAP_SIZE_METERS))
     print("Theta:" + str(theta))
     print("---------------------------------------------")
-    display_image = np.reshape(np.frombuffer(mapbytes, dtype=np.uint8), (MAP_SIZE_PIXELS, MAP_SIZE_PIXELS))
+    display_image = np.reshape(
+        np.frombuffer(mapbytes, dtype=np.uint8),
+        (MAP_SIZE_PIXELS, MAP_SIZE_PIXELS))
+
     if sub_count >= 3:
-        send_bytes =display_image.shape[0].to_bytes(2, 'big') + display_image.shape[1].to_bytes(2, 'big') + int(math.floor(x)).to_bytes(2, 'big') + int(math.floor(y)).to_bytes(2, 'big') + int(math.floor(abs(theta))).to_bytes(2, 'big') + display_image.tobytes()
+        send_bytes = display_image.shape[0].to_bytes(2, 'big') + \
+            display_image.shape[1].to_bytes(2, 'big') + \
+            int(math.floor(x)).to_bytes(2, 'big') + \
+            int(math.floor(y)).to_bytes(2, 'big') + \
+            int(math.floor(abs(theta))).to_bytes(2, 'big') +\
+            display_image.tobytes()
         socket.send(send_bytes)
     sub_count += 1
-    
 # while True:
 #     if c.slam_data_model.x is not None:
-#         if c.slam_data_model.x/MAP_SIZE_METERS != prev_cords[0] or c.slam_data_model.y/MAP_SIZE_METERS != prev_cords[1]:
+#         if c.slam_data_model.x/MAP_SIZE_METERS != prev_cords[0] \
+#             or c.slam_data_model.y/MAP_SIZE_METERS != prev_cords[1]:
 #             prev_cords[0] = c.slam_data_model.x/MAP_SIZE_METERS
 #             prev_cords[1] = c.slam_data_model.y/MAP_SIZE_METERS
 #             print(c.slam_data_model.x/MAP_SIZE_METERS, c.slam_data_model.y/MAP_SIZE_METERS)
@@ -103,11 +110,13 @@ while True:
 #         #     print ("parking coordinates: {}    {} ". format(coordinates[0], coordinates[1]))
 #         #     print("-----------------------------------------")
 
-#         send_bytes =display_image.shape[0].to_bytes(2, 'big') + display_image.shape[1].to_bytes(2, 'big') + display_image.tobytes()
+#         send_bytes =display_image.shape[0].to_bytes(2, 'big') \
+#               + display_image.shape[1].to_bytes(2, 'big') \
+#               + display_image.tobytes()
 #         socket.send(send_bytes)
 
 #         time.sleep(0.1)
-        
+
 #     else:
 #         # mapimg2 = cv2.imread("map.jpg", 0)
 #         # print("asd")
