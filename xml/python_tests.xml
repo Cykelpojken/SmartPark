@@ -1,2 +1,2 @@
-<?xml version="1.0" encoding="utf-8"?><testsuite errors="0" failures="0" name="pytest" skips="0" tests="1" time="0.005"><testcase classname="tests.space_detection_tests" file="tests/space_detection_tests.py" line="1" name="test_answer" time="0.000706911087036"><system-out>second
+<?xml version="1.0" encoding="utf-8"?><testsuite errors="0" failures="0" name="pytest" skips="0" tests="1" time="0.005"><testcase classname="tests.space_detection_tests" file="tests/space_detection_tests.py" line="1" name="test_answer" time="0.000733137130737"><system-out>second
 </system-out></testcase></testsuite>
