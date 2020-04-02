@@ -1,3 +1,2 @@
-#!/bin/bash
-pytest --junitxml=javaxml.xml
-python -m pytest -q --cmdopt=type2 tests/space_detection_tests.py
+#!/bin/bash 
+python -m pytest --junitxml=python_tests.xml -q --cmdopt=type2 tests/space_detection_tests.py
