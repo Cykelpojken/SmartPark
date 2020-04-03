@@ -16,7 +16,7 @@ MAP_SIZE_METERS = cfg.MAP_SIZE_METERS
 BLURMAP = 7
 asdasdasd
 asdasdasd
-
+s
 
 c = CarController(address='trevor.local')
 context = zmq.Context()
