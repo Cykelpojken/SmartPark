@@ -14,6 +14,9 @@ from breezyslam.sensors import RPLidarA1 as LaserModel
 MAP_SIZE_PIXELS = cfg.MAP_SIZE_PIXELS
 MAP_SIZE_METERS = cfg.MAP_SIZE_METERS
 BLURMAP = 7
+asdasdasd
+asdasdasd
+
 
 c = CarController(address='trevor.local')
 context = zmq.Context()
