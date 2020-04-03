@@ -31,7 +31,7 @@ start = Point()
 end = Point()
 startpos = (start.x, start.y)
 endpos = (end.x, end.y)
-dir4 = [Point(0, -1), Point(0, 1), Point(1, 0), Point(-1, 0), Point(-1, -1), Point(-1, 1), Point(1, -1), Point(1, 1)]
+dir4 = [Point(0, -1), Point(0, 1), Point(1, 0), Point(-1, 0)]#, Point(-1, -1), Point(-1, 1), Point(1, -1), Point(1, 1)]
 
 
 def BFS(start_point, end_point):
