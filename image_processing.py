@@ -1,4 +1,4 @@
-from car_controller.car_controller_ import CarController
+from car_controller.car_controller_ import CarController #  pragma: no cover
 import time
 import numpy as np
 import cv2

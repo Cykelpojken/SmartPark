@@ -1,0 +1,18 @@
+./__main__.py:2:19: E261 at least two spaces before inline comment
+./__main__.py:2:20: E262 inline comment should start with '# '
+./image_processing.py:1:57: E261 at least two spaces before inline comment
+./image_processing.py:1:58: E262 inline comment should start with '# '
+./tests/conftest.py:1:14: E261 at least two spaces before inline comment
+./tests/conftest.py:1:15: E262 inline comment should start with '# '
+./tests/conftest.py:3:30: E261 at least two spaces before inline comment
+./tests/conftest.py:3:31: E262 inline comment should start with '# '
+./tests/conftest.py:8:16: E261 at least two spaces before inline comment
+./tests/conftest.py:8:17: E262 inline comment should start with '# '
+./tests/conftest.py:9:21: E261 at least two spaces before inline comment
+./tests/conftest.py:9:22: E262 inline comment should start with '# '
+./tests/space_detection_tests.py:12:36: W291 trailing whitespace
+./tests/space_detection_tests.py:16:1: W293 blank line contains whitespace
+6       E261 at least two spaces before inline comment
+6       E262 inline comment should start with '# '
+1       W291 trailing whitespace
+1       W293 blank line contains whitespace

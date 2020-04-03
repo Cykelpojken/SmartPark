@@ -1,5 +1,5 @@
 from car_controller.CarController import CarController
-import numpy as np
+import numpy as np #  pragma: no cover
 import config as cfg
 import image_processing as ip
 import time
@@ -25,6 +25,7 @@ prev_cords = [0, 0]
 MIN_SAMPLES = 20
 
 lidar = Lidar('/dev/ttyUSB0')
+
 slam = RMHC_SLAM(LaserModel(), MAP_SIZE_PIXELS, MAP_SIZE_METERS)
 
 trajectory = []

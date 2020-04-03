@@ -200,7 +200,7 @@ class CarController:
     def recv_message(self):
         """Read an incoming message from Raspberry Pi."""
         timedout = False
-        print("receiving message... ", end="")
+        #print("receiving message... ", end="")
         with self.RC_connection_lock:
             while not self.pr.message_in_buffer:
                 ser_byte = self.RC_connection.read(self.pr.next_symbol_length)
