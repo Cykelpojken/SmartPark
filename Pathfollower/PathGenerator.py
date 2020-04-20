@@ -2,57 +2,62 @@ import cv2
 import configparser
 import math
 import sys
+import time
 from Pathfollower import pathfinder3
 # HANDLE MOUSE EVENTS FOR SELECTION
+
+
 def click(event, x, y, flags, param):
     global waypoints, img, start_pos, mouse_down
     try:
         if mouse_down:
             tmp = img.copy()
-            place_point(tmp, x, y, flags&cv2.EVENT_FLAG_SHIFTKEY, False)
+            place_point(tmp, x, y, flags & cv2.EVENT_FLAG_SHIFTKEY, False)
             cv2.imshow("Field", tmp)
         if event == cv2.EVENT_LBUTTONDOWN:
             mouse_down = True
         if event == cv2.EVENT_LBUTTONUP:
             mouse_down = False
             if len(waypoints) == 0:
-                start_pos = (x,y)
-            place_point(img, x, y, flags&cv2.EVENT_FLAG_SHIFTKEY, True)
+                start_pos = (x, y)
+            place_point(img, x, y, flags & cv2.EVENT_FLAG_SHIFTKEY, True)
             cv2.imshow("Field", img)
-    except:
+    except KeyError:
         pass
 
+
 def place_point(img, x, y, shift, add):
-    if shift and len(waypoints)>0:
+    if shift and len(waypoints) > 0:
         if abs(x-(start_pos[0]+waypoints[-1][0])) < abs(y-(start_pos[1]-waypoints[-1][1])):
             x = start_pos[0] + waypoints[-1][0]
         else:
             y = start_pos[1] - waypoints[-1][1]
     cv2.circle(img, (x, y), 3, (0, 255, 255), -1)
-    if len(waypoints)>0:
+    if len(waypoints) > 0:
         cv2.line(img, (x, y), (start_pos[0]+waypoints[-1][0], start_pos[1]-waypoints[-1][1]), (0, 255, 255), 2)
     if add:
         waypoints.append((x - start_pos[0], start_pos[1] - y))
 
+
 # INITIALIZE VALUES
 img = pathfinder3.img
 waypoints = pathfinder3.waypojk
-#waypoints = []
-#for t in waypointssmall:
+# waypoints = []
+# for t in waypointssmall:
 #    waypoints.append((t[0]*2, t[1]*2))
-start_pos = (0,0)
+start_pos = (0, 0)
 mouse_down = False
 
 # READ CONFIG FILE
 config = configparser.ConfigParser()
 config.read("Pathfollower/config.ini")
-scaler = 1.0 #float(config["FIELD_IMAGE"]["PIXELS_PER_UNIT"])
+scaler = 1.0  # float(config["FIELD_IMAGE"]["PIXELS_PER_UNIT"])
 
 # READ & SHOW IMAGE, SET OPENCV PROPERTIES
-#img = cv2.imread(config["FIELD_IMAGE"]["FILE_LOCATION"])
-#cv2.imshow("Field", img)
-#cv2.setMouseCallback("Field", click)
-#cv2.waitKey()
+# img = cv2.imread(config["FIELD_IMAGE"]["FILE_LOCATION"])
+# cv2.imshow("Field", img)
+# cv2.setMouseCallback("Field", click)
+# cv2.waitKey()
 
 # MAKE SURE AT LEAST 2 POINTS SELECTED
 if len(waypoints) < 2:
@@ -60,14 +65,14 @@ if len(waypoints) < 2:
 
 # CONVERT PIXELS TO INCHES, CALCULATE WAYPOINT DISTANCE, INJECT MID-WAYPOINTS
 total_waypoints = []
-print(waypoints)
+#print(waypoints)
 waypoints[0] = tuple(x/scaler for x in waypoints[0])
 for i in range(len(waypoints)-1):
     waypoints[i+1] = tuple(x/scaler for x in waypoints[i+1])
     dist = math.sqrt((waypoints[i+1][0]-waypoints[i][0])**2 + (waypoints[i+1][1]-waypoints[i][1])**2)
-    j=0
+    j = 0
     while j < dist:
-        total_waypoints.append(tuple(a+j/dist*(b-a) for a,b in zip(waypoints[i], waypoints[i+1])))
+        total_waypoints.append(tuple(a+j/dist*(b-a) for a, b in zip(waypoints[i], waypoints[i+1])))
         j += float(config["POINT_INJECTION"]["POINT_DIST"])
 total_waypoints.append(waypoints[-1])
 
@@ -96,14 +101,27 @@ smooth_waypoints[0].append(0.1)
 smooth_waypoints[-1].append(0.1)
 for i, w in enumerate(smooth_waypoints[1:-1], start=1):
     if w[0] == smooth_waypoints[i-1][0]:
-        #print(w[0], smooth_waypoints[i-1][0])
-        w[0] += 0.0001  #Error fix for divide-by-zero.. Tolerance?
-        w[1] += 0.0001  #Error fix for divide-by-zero.. Tolerance?
-    k1 = .5*(w[0]**2 + w[1]**2 - smooth_waypoints[i-1][0]**2 - smooth_waypoints[i-1][1]**2) / ((w[0]) - smooth_waypoints[i-1][0])
+        # print(w[0], smooth_waypoints[i-1][0])
+        w[0] += 0.0001  # Error fix for divide-by-zero.. Tolerance?
+        w[1] += 0.0001  # Error fix for divide-by-zero.. Tolerance?
+    k1 = .5*(w[0]**2 + w[1]**2 -
+             smooth_waypoints[i-1][0]**2 -
+             smooth_waypoints[i-1][1]**2) / \
+        ((w[0]) - smooth_waypoints[i-1][0])
+
     k2 = (w[1] - smooth_waypoints[i-1][1]) / (w[0] - smooth_waypoints[i-1][0])
-    #if((smooth_waypoints[i+1][0]*k2 - smooth_waypoints[i+1][1] + smooth_waypoints[i-1][1] - smooth_waypoints[i-1][0]*k2) == 0):
-    #   print((smooth_waypoints[i+1][0]*k2," plus ", smooth_waypoints[i+1][1]," minus ", smooth_waypoints[i-1][1], " plus ", smooth_waypoints[i-1][0]*k2))
-    b = .5*(smooth_waypoints[i-1][0]**2 - 2*smooth_waypoints[i-1][0]*k1 + smooth_waypoints[i-1][1]**2 - smooth_waypoints[i+1][0]**2 + 2*smooth_waypoints[i+1][0]*k1 - smooth_waypoints[i+1][1]**2) / (smooth_waypoints[i+1][0]*k2 - smooth_waypoints[i+1][1] +0.0001 + smooth_waypoints[i-1][1] - smooth_waypoints[i-1][0]*k2)
+
+    b = .5*(smooth_waypoints[i-1][0]**2 -
+            2*smooth_waypoints[i-1][0]*k1 +
+            smooth_waypoints[i-1][1]**2 -
+            smooth_waypoints[i+1][0]**2 +
+            2*smooth_waypoints[i+1][0]*k1 -
+            smooth_waypoints[i+1][1]**2) / \
+        (smooth_waypoints[i+1][0]*k2 -
+         smooth_waypoints[i+1][1] + 0.0001 +
+         smooth_waypoints[i-1][1] -
+         smooth_waypoints[i-1][0]*k2)
+
     a = k1 - k2*b
     r = math.sqrt((w[0]-a)**2 + (w[1]-b)**2)
     w.append(1/r)
@@ -111,16 +129,16 @@ for i, w in enumerate(smooth_waypoints[1:-1], start=1):
 # CALCULATE DESIRED VELOCITY - W[4]
 for w in smooth_waypoints:
     w.append(min(float(config["VELOCITY"]["MAX_VEL"]), float(config["VELOCITY"]["TURNING_CONST"])/w[3]))
-    
+
 # ADD ACCELERATION LIMITS - W[5]
 smooth_waypoints[-1].append(0)
 for i, w in enumerate(reversed(smooth_waypoints[:-1]), start=1):
-    w.append(min(w[4], math.sqrt(smooth_waypoints[-i][5]**2+2*float(config["VELOCITY"]["MAX_ACCEL"])* \
-                                  math.sqrt((w[0]-smooth_waypoints[-i][0])**2 + (w[1]-smooth_waypoints[-i][1])**2))))
+    w.append(min(w[4], math.sqrt(smooth_waypoints[-i][5]**2 + 2*float(config["VELOCITY"]["MAX_ACCEL"]) *
+                                 math.sqrt((w[0]-smooth_waypoints[-i][0])**2 + (w[1]-smooth_waypoints[-i][1])**2))))
 
 smooth_waypoints[0][5] = float(config["VELOCITY"]["STARTING_VEL"])
 for i, w in enumerate(smooth_waypoints[1:], start=1):
-    test = math.sqrt(smooth_waypoints[i-1][5]**2 + 2*float(config["VELOCITY"]["MAX_ACCEL"])* \
+    test = math.sqrt(smooth_waypoints[i-1][5]**2 + 2*float(config["VELOCITY"]["MAX_ACCEL"]) *
                      math.sqrt((w[0] - smooth_waypoints[i-1][0]) ** 2 + (w[1] - smooth_waypoints[i-1][1]) ** 2))
     if test < w[5]:
         w[5] = test
@@ -128,28 +146,12 @@ for i, w in enumerate(smooth_waypoints[1:], start=1):
         break
 
 finalpath = smooth_waypoints
-# WRITE RESULTS TO FILE
-#with open(config["PATH"]["FILE_LOCATION"], "w+") as file:
-#    for w in smooth_waypoints:
-#        file.write(str(w[0]) + "," + str(w[1]) + "," + str(w[5]) + "\n")
+image = img
 
-'''
-# DISPLAY COLOR-CODED IMAGE OF PATH
-cv2.circle(img, (int(start_pos[0]+smooth_waypoints[0][0]*scaler),
-                     int(start_pos[1]-smooth_waypoints[0][1]*scaler)),
-               2, (255*(1-smooth_waypoints[0][5]/float(config["VELOCITY"]["MAX_VEL"])), 0,
-                   255*smooth_waypoints[0][5]/float(config["VELOCITY"]["MAX_VEL"])), -1)
-for i in range(1, len(smooth_waypoints)):
-    cv2.circle(img, (int(start_pos[0]+smooth_waypoints[i][0]*scaler),
-                     int(start_pos[1]-smooth_waypoints[i][1]*scaler)),
-               2, (255*(1-smooth_waypoints[i-1][5]/float(config["VELOCITY"]["MAX_VEL"])), 0,
-                   255*smooth_waypoints[i-1][5]/float(config["VELOCITY"]["MAX_VEL"])), -1)
-    cv2.line(img, (int(start_pos[0]+smooth_waypoints[i][0]*scaler),
-                     int(start_pos[1]-smooth_waypoints[i][1]*scaler)),
-             (int(start_pos[0] + smooth_waypoints[i-1][0] * scaler),
-              int(start_pos[1] - smooth_waypoints[i-1][1] * scaler)),
-             (255 * (1 - smooth_waypoints[i - 1][5] / float(config["VELOCITY"]["MAX_VEL"])), 0,
-              255*smooth_waypoints[i - 1][5] / float(config["VELOCITY"]["MAX_VEL"])), 1)
-cv2.imshow("Field", img)
-'''
-#cv2.waitKey()
+#cv2.destroyAllWindows()
+time.sleep(0.5)
+# WRITE RESULTS TO FILE
+# with open(config["PATH"]["FILE_LOCATION"], "w+") as file:
+#     for w in smooth_waypoints:
+#         file.write(str(w[0]) + "," + str(w[1]) + "," + str(w[5]) + "\n")
+# cv2.waitKey()
