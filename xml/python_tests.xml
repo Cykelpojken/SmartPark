@@ -1,1 +1,1 @@
-<?xml version="1.0" encoding="utf-8"?><testsuite errors="0" failures="0" name="pytest" skips="0" tests="1" time="0.006"><testcase classname="tests.space_detection_tests" file="tests/space_detection_tests.py" line="3" name="test_main" time="0.000694990158081"></testcase></testsuite>
+<?xml version="1.0" encoding="utf-8"?><testsuite errors="0" failures="0" name="pytest" skips="0" tests="1" time="0.005"><testcase classname="tests.space_detection_tests" file="tests/space_detection_tests.py" line="3" name="test_main" time="0.000739097595215"></testcase></testsuite>

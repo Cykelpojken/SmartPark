@@ -14,7 +14,7 @@ DEFAULT_SLAM_MAP = True
 
 context = zmq.Context()
 socket = context.socket(zmq.SUB)
-socket.connect("tcp://trevor.local:5558")
+socket.connect("tcp://trevor.local:5553")
 socket.setsockopt(zmq.SUBSCRIBE, b'')
 socket.set_hwm(1)
 # socket.setsockopt(zmq.RCVHWM, 1)
@@ -36,6 +36,7 @@ def init_map():
 
 while True:
     pic = socket.recv()
+    print(pic)
 
     x_pic = int.from_bytes(pic[:2], 'big')
     y_pic = int.from_bytes(pic[2:4], 'big')
@@ -52,6 +53,4 @@ while True:
 
     if not viz.display(x_coordinate/100, y_coordinate/100, theta - 180, pic):
         exit()
-    else:
-        pass
-        # print("BEFORE: " + str(c.slam_data_model.x/25), str(c.slam_data_model.y/25))
+

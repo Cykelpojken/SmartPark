@@ -1,135 +1,101 @@
 from car_controller.CarController import CarController
-import numpy as np #  pragma: no cover
+import numpy as np  # pragma: no cover
 import config as cfg
 import image_processing as ip
 import time
 import cv2
 import zmq
 import math
+import threading
 
 from rplidar import RPLidar as Lidar
 from breezyslam.algorithms import RMHC_SLAM
 from breezyslam.sensors import RPLidarA1 as LaserModel
 
-MAP_SIZE_PIXELS = cfg.MAP_SIZE_PIXELS
-MAP_SIZE_METERS = cfg.MAP_SIZE_METERS
-BLURMAP = 7
-asdasdasd
-asdasdasd
-s
+class Main():
 
-c = CarController(address='trevor.local')
-context = zmq.Context()
-socket = context.socket(zmq.PUB)
-socket.setsockopt(zmq.SNDHWM, 10)
-socket.bind("tcp://*:%s" % 5558)
-prev_cords = [0, 0]
+    def __init__(self):
+        self.c = CarController(address='trevor.local')
+        self.BLURMAP = 7
+        self.prev_cords = [0, 0]
+        self.MIN_SAMPLES = 20
+        self.trajectory = []
+        self.previous_distances = None
+        self.previous_angles = None
 
-MIN_SAMPLES = 20
+        self.sub_count = 0
+        self.init_zmq()
+        self.init_lidar()
+        self.init_slam()
+        
+    def init_zmq(self):
+        self.context = zmq.Context()
+        self.socket = self.context.socket(zmq.PUB)
+        self.socket.setsockopt(zmq.SNDHWM, 10)
+        self.socket.bind("tcp://*:%s" % 5558)
+    
+    def init_lidar(self):
+        self.lidar = Lidar('/dev/ttyUSB0')
+        self.iterator = self.lidar.iter_scans()
+        # First scan is crap, so ignore it
+        next(self.iterator)
 
-lidar = Lidar('/dev/ttyUSB0')
-
-slam = RMHC_SLAM(LaserModel(), MAP_SIZE_PIXELS, MAP_SIZE_METERS)
-
-trajectory = []
-
-# Initialize empty map
-mapbytes = bytearray(MAP_SIZE_PIXELS * MAP_SIZE_PIXELS)
-
-# Create an iterator to collect scan data from the RPLidar
-iterator = lidar.iter_scans()
+    def init_slam(self):
+        self.MAP_SIZE_PIXELS = cfg.MAP_SIZE_PIXELS
+        self.MAP_SIZE_METERS = cfg.MAP_SIZE_METERS
+        self.slam = RMHC_SLAM(LaserModel(), self.MAP_SIZE_PIXELS, self.MAP_SIZE_METERS)
+        self.mapbytes = bytearray(self.MAP_SIZE_PIXELS * self.MAP_SIZE_PIXELS)
 
 
-# We will use these to store previous scan in case current scan is inadequate
-previous_distances = None
-previous_angles = None
+    def main_loop(self):
+        while True:
+            # Extract (quality, angle, distance) triples from current scan
+            items = [item for item in next(self.iterator)]
 
-# First scan is crap, so ignore it
-next(iterator)
-sub_count = 0
-while True:
+            # Extract distances and angles from triples
+            distances = [item[2] for item in items]
+            angles = [item[1] for item in items]
 
-    # Extract (quality, angle, distance) triples from current scan
-    items = [item for item in next(iterator)]
+            # Update SLAM with current Lidar scan and scan angles if adequate
+            if len(distances) > self.MIN_SAMPLES:
 
-    # Extract distances and angles from triples
-    distances = [item[2] for item in items]
-    angles = [item[1] for item in items]
+                self.slam.update(distances, scan_angles_degrees=angles)
+                self.previous_distances = distances.copy()
+                self.previous_angles = angles.copy()
 
-    # Update SLAM with current Lidar scan and scan angles if adequate
-    if len(distances) > MIN_SAMPLES:
+            # If not adequate, use previous
+            elif self.previous_distances is not None:
+                self.slam.update(self.previous_distances, scan_angles_degrees=self.previous_angles)
 
-        slam.update(distances, scan_angles_degrees=angles)
-        previous_distances = distances.copy()
-        previous_angles = angles.copy()
+            # Get current robot position
+            x, y, theta = self.slam.getpos()
 
-    # If not adequate, use previous
-    elif previous_distances is not None:
-        slam.update(previous_distances, scan_angles_degrees=previous_angles)
+            # Get current map bytes as grayscale
+            self.slam.getmap(self.mapbytes)
 
-    # Get current robot position
-    x, y, theta = slam.getpos()
+            # Display map and robot pose, exiting gracefully if user closes it
+            # if not (viz.display(x/1000., y/1000., -theta + 180, mapbytes)):
+            #     exit(0)
+            print("X: " + str(x/cfg.MAP_SIZE_METERS))
+            print("Y:" + str(y/cfg.MAP_SIZE_METERS))
+            print("Theta:" + str(theta))
+            print("---------------------------------------------")
+            display_image = np.reshape(
+                np.frombuffer(self.mapbytes, dtype=np.uint8),
+                (self.MAP_SIZE_PIXELS, self.MAP_SIZE_PIXELS))
 
-    # Get current map bytes as grayscale
-    slam.getmap(mapbytes)
+            if self.sub_count >= 3:
+                send_bytes = display_image.shape[0].to_bytes(2, 'big') + \
+                    display_image.shape[1].to_bytes(2, 'big') + \
+                    int(math.floor(x)).to_bytes(2, 'big') + \
+                    int(math.floor(y)).to_bytes(2, 'big') + \
+                    int(math.floor(abs(theta))).to_bytes(2, 'big') +\
+                    display_image.tobytes()
+                self.socket.send(send_bytes)
+            self.sub_count += 1
 
-    # Display map and robot pose, exiting gracefully if user closes it
-    # if not (viz.display(x/1000., y/1000., -theta + 180, mapbytes)):
-    #     exit(0)
-    print("X: " + str(x/cfg.MAP_SIZE_METERS))
-    print("Y:" + str(y/cfg.MAP_SIZE_METERS))
-    print("Theta:" + str(theta))
-    print("---------------------------------------------")
-    display_image = np.reshape(
-        np.frombuffer(mapbytes, dtype=np.uint8),
-        (MAP_SIZE_PIXELS, MAP_SIZE_PIXELS))
-
-    if sub_count >= 3:
-        send_bytes = display_image.shape[0].to_bytes(2, 'big') + \
-            display_image.shape[1].to_bytes(2, 'big') + \
-            int(math.floor(x)).to_bytes(2, 'big') + \
-            int(math.floor(y)).to_bytes(2, 'big') + \
-            int(math.floor(abs(theta))).to_bytes(2, 'big') +\
-            display_image.tobytes()
-        socket.send(send_bytes)
-    sub_count += 1
-# while True:
-#     if c.slam_data_model.x is not None:
-#         if c.slam_data_model.x/MAP_SIZE_METERS != prev_cords[0] \
-#             or c.slam_data_model.y/MAP_SIZE_METERS != prev_cords[1]:
-#             prev_cords[0] = c.slam_data_model.x/MAP_SIZE_METERS
-#             prev_cords[1] = c.slam_data_model.y/MAP_SIZE_METERS
-#             print(c.slam_data_model.x/MAP_SIZE_METERS, c.slam_data_model.y/MAP_SIZE_METERS)
-#         print(c.slam_data_model.theta)
-#         mapimg = np.reshape(np.frombuffer(c.slam_data_model.mapbytes, dtype=np.uint8), (MAP_SIZE_PIXELS, MAP_SIZE_PIXELS))
-#         cv2.imwrite("map.png", mapimg)
-#         t_map = ip.thresholding(mapimg)
-#         d_map = ip.dilation(t_map)
-#         e_map =  ip.erosion(d_map)
-#         blur = ip.blur(e_map, BLURMAP, 0)
-#         identified, coordinates = ip.find_spot(blur)
-#         display_image = mapimg
-#         # if coordinates is not None:
-#         #     print("-----------------------------------------")
-#         #     print ("parking coordinates: {}    {} ". format(coordinates[0], coordinates[1]))
-#         #     print("-----------------------------------------")
-
-#         send_bytes =display_image.shape[0].to_bytes(2, 'big') \
-#               + display_image.shape[1].to_bytes(2, 'big') \
-#               + display_image.tobytes()
-#         socket.send(send_bytes)
-
-#         time.sleep(0.1)
-
-#     else:
-#         # mapimg2 = cv2.imread("map.jpg", 0)
-#         # print("asd")
-#         # t_map = ip.thresholding(mapimg2)
-#         # d_map = ip.dilation(t_map)
-#         # e_map =  ip.erosion(d_map)
-#         # blur = ip.blur(e_map)
-#         # identified, coordinates = ip.find_spot(blur)
-#         #ip.find_spot()
-#         #print(MATCHES)
-#         print("sleeping 1 sec")
-#         time.sleep(1)
+if __name__ == "__main__":
+    m = Main()
+    m.__init__()
+    time.sleep(1)
+    threading.Thread(target=m.main_loop).start()

@@ -1,18 +1,404 @@
-./__main__.py:2:19: E261 at least two spaces before inline comment
-./__main__.py:2:20: E262 inline comment should start with '# '
-./image_processing.py:1:57: E261 at least two spaces before inline comment
-./image_processing.py:1:58: E262 inline comment should start with '# '
-./tests/conftest.py:1:14: E261 at least two spaces before inline comment
-./tests/conftest.py:1:15: E262 inline comment should start with '# '
-./tests/conftest.py:3:30: E261 at least two spaces before inline comment
-./tests/conftest.py:3:31: E262 inline comment should start with '# '
-./tests/conftest.py:8:16: E261 at least two spaces before inline comment
-./tests/conftest.py:8:17: E262 inline comment should start with '# '
-./tests/conftest.py:9:21: E261 at least two spaces before inline comment
-./tests/conftest.py:9:22: E262 inline comment should start with '# '
-./tests/space_detection_tests.py:12:36: W291 trailing whitespace
-./tests/space_detection_tests.py:16:1: W293 blank line contains whitespace
+./lidarServer/InfoModel.py:12:53: W292 no newline at end of file
+./lidarServer/LidarController.py:15:34: E252 missing whitespace around parameter equals
+./lidarServer/LidarController.py:15:35: E252 missing whitespace around parameter equals
+./lidarServer/LidarController.py:22:1: W293 blank line contains whitespace
+./lidarServer/LidarController.py:29:1: W293 blank line contains whitespace
+./lidarServer/LockModel.py:5:32: W292 no newline at end of file
+./lidarServer/PublisherController.py:20:72: W292 no newline at end of file
+./lidarServer/ScanModel.py:7:5: E301 expected 1 blank line, found 0
+./lidarServer/ScanModel.py:13:1: W391 blank line at end of file
+./lidarServer/Signal.py:11:23: W292 no newline at end of file
+./lidarServer/ZmqModel.py:7:1: W293 blank line contains whitespace
+./lidarServer/ZmqModel.py:15:1: W391 blank line at end of file
+./lidarServer/__main__.py:14:126: E501 line too long (131 > 125 characters)
+./lidarServer/config.py:2:20: W292 no newline at end of file
+./lidarServer/lidar_proto.py:4:1: W191 indentation contains tabs
+./lidarServer/lidar_proto.py:4:2: E113 unexpected indentation
+./lidarServer/lidar_proto.py:6:1: E128 continuation line under-indented for visual indent
+./lidarServer/lidar_proto.py:6:15: W504 line break after binary operator
+./lidarServer/lidar_proto.py:7:1: E128 continuation line under-indented for visual indent
+./lidarServer/lidar_proto.py:8:1: E128 continuation line under-indented for visual indent
+./lidarServer/lidar_proto.py:9:1: E128 continuation line under-indented for visual indent
+./lidarServer/lidar_proto.py:10:1: E128 continuation line under-indented for visual indent
+./lidarServer/lidar_proto.py:11:1: W191 indentation contains tabs
+./lidarServer/lidar_proto.py:11:2: E128 continuation line under-indented for visual indent
+./lidarServer/lidar_proto.py:12:1: E128 continuation line under-indented for visual indent
+./lidarServer/lidar_proto.py:13:1: E128 continuation line under-indented for visual indent
+./lidarServer/lidar_proto.py:14:1: E128 continuation line under-indented for visual indent
+./lidarServer/lidar_proto.py:15:1: W191 indentation contains tabs
+./lidarServer/lidar_proto.py:15:2: E128 continuation line under-indented for visual indent
+./lidarServer/lidar_proto.py:16:1: E128 continuation line under-indented for visual indent
+./lidarServer/lidar_proto.py:17:1: E128 continuation line under-indented for visual indent
+./lidarServer/lidar_proto.py:17:18: W504 line break after binary operator
+./lidarServer/lidar_proto.py:19:1: E128 continuation line under-indented for visual indent
+./lidarServer/lidar_proto.py:20:1: W191 indentation contains tabs
+./lidarServer/lidar_proto.py:20:2: E128 continuation line under-indented for visual indent
+./lidarServer/lidar_proto.py:21:2: E128 continuation line under-indented for visual indent
+./lidarServer/lidar_proto.py:23:1: E128 continuation line under-indented for visual indent
+./lidarServer/lidar_proto.py:24:1: E128 continuation line under-indented for visual indent
+./lidarServer/lidar_proto.py:24:22: W292 no newline at end of file
+./lidarServer/lidar_proto.py:25:1: E901 TokenError: EOF in multi-line statement
+./lidarServer/lidar_proto_pb2.py:5:3: E225 missing whitespace around operator
+./lidarServer/lidar_proto_pb2.py:5:23: E225 missing whitespace around operator
+./lidarServer/lidar_proto_pb2.py:5:39: E231 missing whitespace after ':'
+./lidarServer/lidar_proto_pb2.py:5:55: E231 missing whitespace after ':'
+./lidarServer/lidar_proto_pb2.py:6:1: E402 module level import not at top of file
+./lidarServer/lidar_proto_pb2.py:7:1: E402 module level import not at top of file
+./lidarServer/lidar_proto_pb2.py:8:1: E402 module level import not at top of file
+./lidarServer/lidar_proto_pb2.py:9:1: E402 module level import not at top of file
+./lidarServer/lidar_proto_pb2.py:10:1: E402 module level import not at top of file
+./lidarServer/lidar_proto_pb2.py:18:1: E303 too many blank lines (4)
+./lidarServer/lidar_proto_pb2.py:19:3: E121 continuation line under-indented for hanging indent
+./lidarServer/lidar_proto_pb2.py:22:126: E501 line too long (561 > 125 characters)
+./lidarServer/lidar_proto_pb2.py:27:1: E303 too many blank lines (3)
+./lidarServer/lidar_proto_pb2.py:28:3: E121 continuation line under-indented for hanging indent
+./lidarServer/lidar_proto_pb2.py:33:5: E121 continuation line under-indented for hanging indent
+./lidarServer/lidar_proto_pb2.py:34:7: E121 continuation line under-indented for hanging indent
+./lidarServer/lidar_proto_pb2.py:38:7: E121 continuation line under-indented for hanging indent
+./lidarServer/lidar_proto_pb2.py:51:3: E121 continuation line under-indented for hanging indent
+./lidarServer/lidar_proto_pb2.py:57:5: E121 continuation line under-indented for hanging indent
+./lidarServer/lidar_proto_pb2.py:58:7: E121 continuation line under-indented for hanging indent
+./lidarServer/lidar_proto_pb2.py:65:7: E121 continuation line under-indented for hanging indent
+./lidarServer/lidar_proto_pb2.py:76:5: E121 continuation line under-indented for hanging indent
+./lidarServer/lidar_proto_pb2.py:90:3: E121 continuation line under-indented for hanging indent
+./lidarServer/lidar_proto_pb2.py:96:5: E121 continuation line under-indented for hanging indent
+./lidarServer/lidar_proto_pb2.py:97:7: E121 continuation line under-indented for hanging indent
+./lidarServer/lidar_proto_pb2.py:104:7: E121 continuation line under-indented for hanging indent
+./lidarServer/lidar_proto_pb2.py:128:3: E121 continuation line under-indented for hanging indent
+./lidarServer/lidar_proto_pb2.py:134:5: E121 continuation line under-indented for hanging indent
+./lidarServer/lidar_proto_pb2.py:135:7: E121 continuation line under-indented for hanging indent
+./lidarServer/lidar_proto_pb2.py:142:7: E121 continuation line under-indented for hanging indent
+./lidarServer/lidar_proto_pb2.py:166:3: E121 continuation line under-indented for hanging indent
+./lidarServer/lidar_proto_pb2.py:172:5: E121 continuation line under-indented for hanging indent
+./lidarServer/lidar_proto_pb2.py:173:7: E121 continuation line under-indented for hanging indent
+./lidarServer/lidar_proto_pb2.py:197:3: E121 continuation line under-indented for hanging indent
+./lidarServer/lidar_proto_pb2.py:203:5: E121 continuation line under-indented for hanging indent
+./lidarServer/lidar_proto_pb2.py:204:7: E121 continuation line under-indented for hanging indent
+./lidarServer/lidar_proto_pb2.py:237:3: E121 continuation line under-indented for hanging indent
+./lidarServer/lidar_proto_pb2.py:237:13: E251 unexpected spaces around keyword / parameter equals
+./lidarServer/lidar_proto_pb2.py:237:15: E251 unexpected spaces around keyword / parameter equals
+./lidarServer/lidar_proto_pb2.py:238:13: E251 unexpected spaces around keyword / parameter equals
+./lidarServer/lidar_proto_pb2.py:238:15: E251 unexpected spaces around keyword / parameter equals
+./lidarServer/lidar_proto_pb2.py:240:3: E123 closing bracket does not match indentation of opening bracket's line
+./lidarServer/lidar_proto_pb2.py:244:3: E121 continuation line under-indented for hanging indent
+./lidarServer/lidar_proto_pb2.py:244:13: E251 unexpected spaces around keyword / parameter equals
+./lidarServer/lidar_proto_pb2.py:244:15: E251 unexpected spaces around keyword / parameter equals
+./lidarServer/lidar_proto_pb2.py:245:13: E251 unexpected spaces around keyword / parameter equals
+./lidarServer/lidar_proto_pb2.py:245:15: E251 unexpected spaces around keyword / parameter equals
+./lidarServer/lidar_proto_pb2.py:247:3: E123 closing bracket does not match indentation of opening bracket's line
+./lidarServer/lidar_proto_pb2.py:251:3: E121 continuation line under-indented for hanging indent
+./lidarServer/lidar_proto_pb2.py:251:13: E251 unexpected spaces around keyword / parameter equals
+./lidarServer/lidar_proto_pb2.py:251:15: E251 unexpected spaces around keyword / parameter equals
+./lidarServer/lidar_proto_pb2.py:252:13: E251 unexpected spaces around keyword / parameter equals
+./lidarServer/lidar_proto_pb2.py:252:15: E251 unexpected spaces around keyword / parameter equals
+./lidarServer/lidar_proto_pb2.py:254:3: E123 closing bracket does not match indentation of opening bracket's line
+./lidarServer/lidar_proto_pb2.py:258:3: E121 continuation line under-indented for hanging indent
+./lidarServer/lidar_proto_pb2.py:258:13: E251 unexpected spaces around keyword / parameter equals
+./lidarServer/lidar_proto_pb2.py:258:15: E251 unexpected spaces around keyword / parameter equals
+./lidarServer/lidar_proto_pb2.py:259:13: E251 unexpected spaces around keyword / parameter equals
+./lidarServer/lidar_proto_pb2.py:259:15: E251 unexpected spaces around keyword / parameter equals
+./lidarServer/lidar_proto_pb2.py:261:3: E123 closing bracket does not match indentation of opening bracket's line
+./lidarServer/lidar_proto_pb2.py:265:3: E121 continuation line under-indented for hanging indent
+./lidarServer/lidar_proto_pb2.py:265:13: E251 unexpected spaces around keyword / parameter equals
+./lidarServer/lidar_proto_pb2.py:265:15: E251 unexpected spaces around keyword / parameter equals
+./lidarServer/lidar_proto_pb2.py:266:13: E251 unexpected spaces around keyword / parameter equals
+./lidarServer/lidar_proto_pb2.py:266:15: E251 unexpected spaces around keyword / parameter equals
+./lidarServer/lidar_proto_pb2.py:268:3: E123 closing bracket does not match indentation of opening bracket's line
+./lidarServer/.vscode/.ropeproject/config.py:24:5: E265 block comment should start with '# '
+./lidarServer/.vscode/.ropeproject/config.py:34:5: E265 block comment should start with '# '
+./lidarServer/.vscode/.ropeproject/config.py:37:5: E265 block comment should start with '# '
+./PyRoboViz/randomwalk.py:10:63: W291 trailing whitespace
+./PyRoboViz/randomwalk.py:11:67: W291 trailing whitespace
+./PyRoboViz/randomwalk.py:14:61: W291 trailing whitespace
+./PyRoboViz/randomwalk.py:19:73: W291 trailing whitespace
+./PyRoboViz/randomwalk.py:31:10: E221 multiple spaces before operator
+./PyRoboViz/randomwalk.py:39:1: E305 expected 2 blank lines after class or function definition, found 1
+./PyRoboViz/randomwalk.py:47:8: E714 test for object identity should be 'is not'
+./PyRoboViz/randomwalk.py:55:23: E231 missing whitespace after ','
+./PyRoboViz/randomwalk.py:55:25: E231 missing whitespace after ','
+./PyRoboViz/setup.py:9:63: W291 trailing whitespace
+./PyRoboViz/setup.py:10:67: W291 trailing whitespace
+./PyRoboViz/setup.py:12:61: W291 trailing whitespace
+./PyRoboViz/setup.py:20:11: E251 unexpected spaces around keyword / parameter equals
+./PyRoboViz/setup.py:20:13: E251 unexpected spaces around keyword / parameter equals
+./PyRoboViz/setup.py:21:15: E251 unexpected spaces around keyword / parameter equals
+./PyRoboViz/setup.py:21:17: E251 unexpected spaces around keyword / parameter equals
+./PyRoboViz/roboviz/__init__.py:11:63: W291 trailing whitespace
+./PyRoboViz/roboviz/__init__.py:12:67: W291 trailing whitespace
+./PyRoboViz/roboviz/__init__.py:15:61: W291 trailing whitespace
+./PyRoboViz/roboviz/__init__.py:36:18: E221 multiple spaces before operator
+./PyRoboViz/roboviz/__init__.py:37:1: W293 blank line contains whitespace
+./PyRoboViz/roboviz/__init__.py:59:1: W293 blank line contains whitespace
+./PyRoboViz/roboviz/__init__.py:61:37: E231 missing whitespace after ','
+./PyRoboViz/roboviz/__init__.py:82:32: E231 missing whitespace after ','
+./PyRoboViz/roboviz/__init__.py:82:63: E231 missing whitespace after ','
+./PyRoboViz/roboviz/__init__.py:111:62: W291 trailing whitespace
+./PyRoboViz/roboviz/__init__.py:120:12: E231 missing whitespace after ','
+./PyRoboViz/roboviz/__init__.py:123:12: E714 test for object identity should be 'is not'
+./PyRoboViz/roboviz/__init__.py:130:9: E741 ambiguous variable name 'l'
+./PyRoboViz/roboviz/__init__.py:133:1: W293 blank line contains whitespace
+./PyRoboViz/roboviz/__init__.py:136:21: E225 missing whitespace around operator
+./PyRoboViz/roboviz/__init__.py:136:49: W291 trailing whitespace
+./PyRoboViz/roboviz/__init__.py:137:17: E128 continuation line under-indented for visual indent
+./PyRoboViz/roboviz/__init__.py:137:63: W291 trailing whitespace
+./PyRoboViz/roboviz/__init__.py:138:17: E128 continuation line under-indented for visual indent
+./PyRoboViz/roboviz/__init__.py:141:34: E231 missing whitespace after ','
+./PyRoboViz/roboviz/__init__.py:142:30: E714 test for object identity should be 'is not'
+./PyRoboViz/roboviz/__init__.py:143:60: E231 missing whitespace after ','
+./PyRoboViz/roboviz/__init__.py:143:90: E231 missing whitespace after ','
+./PyRoboViz/roboviz/__init__.py:146:24: W291 trailing whitespace
+./PyRoboViz/roboviz/__init__.py:157:27: E261 at least two spaces before inline comment
+./PyRoboViz/roboviz/__init__.py:159:9: E722 do not use bare 'except'
+./PyRoboViz/roboviz/__init__.py:169:1: W293 blank line contains whitespace
+./PyRoboViz/roboviz/__init__.py:171:1: W293 blank line contains whitespace
+./PyRoboViz/roboviz/__init__.py:182:9: E265 block comment should start with '# '
+./PyRoboViz/roboviz/__init__.py:182:126: E501 line too long (232 > 125 characters)
+./PyRoboViz/roboviz/__init__.py:196:1: W391 blank line at end of file
+./PyRoboViz/build/lib/roboviz/__init__.py:11:63: W291 trailing whitespace
+./PyRoboViz/build/lib/roboviz/__init__.py:12:67: W291 trailing whitespace
+./PyRoboViz/build/lib/roboviz/__init__.py:15:61: W291 trailing whitespace
+./PyRoboViz/build/lib/roboviz/__init__.py:36:18: E221 multiple spaces before operator
+./PyRoboViz/build/lib/roboviz/__init__.py:37:1: W293 blank line contains whitespace
+./PyRoboViz/build/lib/roboviz/__init__.py:59:1: W293 blank line contains whitespace
+./PyRoboViz/build/lib/roboviz/__init__.py:61:37: E231 missing whitespace after ','
+./PyRoboViz/build/lib/roboviz/__init__.py:82:32: E231 missing whitespace after ','
+./PyRoboViz/build/lib/roboviz/__init__.py:82:63: E231 missing whitespace after ','
+./PyRoboViz/build/lib/roboviz/__init__.py:111:62: W291 trailing whitespace
+./PyRoboViz/build/lib/roboviz/__init__.py:120:12: E231 missing whitespace after ','
+./PyRoboViz/build/lib/roboviz/__init__.py:123:12: E714 test for object identity should be 'is not'
+./PyRoboViz/build/lib/roboviz/__init__.py:130:9: E741 ambiguous variable name 'l'
+./PyRoboViz/build/lib/roboviz/__init__.py:133:1: W293 blank line contains whitespace
+./PyRoboViz/build/lib/roboviz/__init__.py:136:21: E225 missing whitespace around operator
+./PyRoboViz/build/lib/roboviz/__init__.py:136:49: W291 trailing whitespace
+./PyRoboViz/build/lib/roboviz/__init__.py:137:17: E128 continuation line under-indented for visual indent
+./PyRoboViz/build/lib/roboviz/__init__.py:137:63: W291 trailing whitespace
+./PyRoboViz/build/lib/roboviz/__init__.py:138:17: E128 continuation line under-indented for visual indent
+./PyRoboViz/build/lib/roboviz/__init__.py:141:34: E231 missing whitespace after ','
+./PyRoboViz/build/lib/roboviz/__init__.py:142:30: E714 test for object identity should be 'is not'
+./PyRoboViz/build/lib/roboviz/__init__.py:143:60: E231 missing whitespace after ','
+./PyRoboViz/build/lib/roboviz/__init__.py:143:90: E231 missing whitespace after ','
+./PyRoboViz/build/lib/roboviz/__init__.py:146:24: W291 trailing whitespace
+./PyRoboViz/build/lib/roboviz/__init__.py:157:27: E261 at least two spaces before inline comment
+./PyRoboViz/build/lib/roboviz/__init__.py:159:9: E722 do not use bare 'except'
+./PyRoboViz/build/lib/roboviz/__init__.py:169:1: W293 blank line contains whitespace
+./PyRoboViz/build/lib/roboviz/__init__.py:171:1: W293 blank line contains whitespace
+./PyRoboViz/build/lib/roboviz/__init__.py:182:9: E265 block comment should start with '# '
+./PyRoboViz/build/lib/roboviz/__init__.py:182:126: E501 line too long (232 > 125 characters)
+./PyRoboViz/build/lib/roboviz/__init__.py:196:1: W391 blank line at end of file
+./car_controller/CANStateController.py:14:46: W291 trailing whitespace
+./car_controller/CANStateController.py:15:27: W291 trailing whitespace
+./car_controller/CANStateController.py:19:5: E303 too many blank lines (2)
+./car_controller/CANStateController.py:27:5: E303 too many blank lines (2)
+./car_controller/CANStateController.py:36:29: W292 no newline at end of file
+./car_controller/CANStateModel.py:6:5: E301 expected 1 blank line, found 0
+./car_controller/CANStateModel.py:9:23: E241 multiple spaces after ','
+./car_controller/CANStateModel.py:16:1: E303 too many blank lines (3)
+./car_controller/CANStateModel.py:29:1: W293 blank line contains whitespace
+./car_controller/CANStateModel.py:29:1: W391 blank line at end of file
+./car_controller/CarController.py:31:58: E251 unexpected spaces around keyword / parameter equals
+./car_controller/CarController.py:31:60: E251 unexpected spaces around keyword / parameter equals
+./car_controller/CarController.py:35:1: W293 blank line contains whitespace
+./car_controller/CarController.py:37:1: W293 blank line contains whitespace
+./car_controller/CarController.py:45:1: W293 blank line contains whitespace
+./car_controller/CarController.py:49:1: W293 blank line contains whitespace
+./car_controller/CarController.py:71:1: W293 blank line contains whitespace
+./car_controller/CarController.py:77:1: W293 blank line contains whitespace
+./car_controller/CarController.py:78:5: E303 too many blank lines (2)
+./car_controller/CarController.py:80:45: W291 trailing whitespace
+./car_controller/CarController.py:84:1: W293 blank line contains whitespace
+./car_controller/CarController.py:98:45: W291 trailing whitespace
+./car_controller/CarController.py:103:36: W291 trailing whitespace
+./car_controller/CarController.py:123:14: W291 trailing whitespace
+./car_controller/CarController.py:124:34: W291 trailing whitespace
+./car_controller/CarController.py:138:44: W291 trailing whitespace
+./car_controller/CarController.py:158:1: W293 blank line contains whitespace
+./car_controller/CarController.py:160:5: E303 too many blank lines (2)
+./car_controller/CarController.py:166:1: W293 blank line contains whitespace
+./car_controller/CarController.py:169:1: W293 blank line contains whitespace
+./car_controller/CarController.py:191:53: W291 trailing whitespace
+./car_controller/CarController.py:202:9: E722 do not use bare 'except'
+./car_controller/CarController.py:203:23: E211 whitespace before '('
+./car_controller/CarController.py:226:19: E231 missing whitespace after ','
+./car_controller/CarController.py:226:26: E225 missing whitespace around operator
+./car_controller/CarController.py:226:31: W291 trailing whitespace
+./car_controller/CarController.py:227:17: W291 trailing whitespace
+./car_controller/CarController.py:234:17: E265 block comment should start with '# '
+./car_controller/ConfigModel.py:6:29: W292 no newline at end of file
+./car_controller/LidarController.py:35:29: W292 no newline at end of file
+./car_controller/LidarScanModel.py:10:1: W293 blank line contains whitespace
+./car_controller/LidarScanModel.py:17:38: W292 no newline at end of file
+./car_controller/Signal.py:16:12: W291 trailing whitespace
+./car_controller/Signal.py:18:1: W293 blank line contains whitespace
+./car_controller/Signal.py:23:23: W292 no newline at end of file
+./car_controller/SlamController.py:7:16: E221 multiple spaces before operator
+./car_controller/SlamController.py:8:16: E221 multiple spaces before operator
+./car_controller/SlamController.py:9:13: E221 multiple spaces before operator
+./car_controller/SlamController.py:15:16: E221 multiple spaces before operator
+./car_controller/SlamController.py:30:21: E222 multiple spaces after operator
+./car_controller/SlamController.py:37:1: W293 blank line contains whitespace
+./car_controller/SlamController.py:38:1: W293 blank line contains whitespace
+./car_controller/SlamController.py:38:1: W391 blank line at end of file
+./car_controller/SlamDataModel.py:3:16: E221 multiple spaces before operator
+./car_controller/SlamDataModel.py:4:16: E221 multiple spaces before operator
+./car_controller/SlamDataModel.py:24:1: W391 blank line at end of file
+./car_controller/StateModel.py:17:33: E711 comparison to None should be 'if cond is not None:'
+./car_controller/ZmqModel.py:4:37: W292 no newline at end of file
+./car_controller/__init__.py:1:1: E265 block comment should start with '# '
+./car_controller/__init__.py:1:75: W292 no newline at end of file
+./car_controller/__init__.py:1:75: W292 no newline at end of file
+./car_controller/__init__.py:1:75: W292 no newline at end of file
+./car_controller/car_controller_.py:38:5: E303 too many blank lines (2)
+./car_controller/car_controller_.py:41:5: E303 too many blank lines (2)
+./car_controller/car_controller_.py:41:58: E251 unexpected spaces around keyword / parameter equals
+./car_controller/car_controller_.py:41:60: E251 unexpected spaces around keyword / parameter equals
+./car_controller/car_controller_.py:45:1: W293 blank line contains whitespace
+./car_controller/car_controller_.py:89:17: E128 continuation line under-indented for visual indent
+./car_controller/car_controller_.py:90:17: E128 continuation line under-indented for visual indent
+./car_controller/car_controller_.py:95:1: W293 blank line contains whitespace
+./car_controller/car_controller_.py:96:5: E303 too many blank lines (2)
+./car_controller/car_controller_.py:98:45: W291 trailing whitespace
+./car_controller/car_controller_.py:103:39: W291 trailing whitespace
+./car_controller/car_controller_.py:110:5: E303 too many blank lines (2)
+./car_controller/car_controller_.py:203:9: E265 block comment should start with '# '
+./car_controller/car_controller_.py:211:9: E265 block comment should start with '# '
+./car_controller/comms_bytes.py:48:19: E261 at least two spaces before inline comment
+./car_controller/comms_bytes.py:49:13: E222 multiple spaces after operator
+./car_controller/comms_bytes.py:49:19: E261 at least two spaces before inline comment
+./car_controller/config.py:2:18: W292 no newline at end of file
+./car_controller/lidar_proto_pb2.py:16:1: E303 too many blank lines (4)
+./car_controller/lidar_proto_pb2.py:17:3: E121 continuation line under-indented for hanging indent
+./car_controller/lidar_proto_pb2.py:21:126: E501 line too long (558 > 125 characters)
+./car_controller/lidar_proto_pb2.py:26:1: E303 too many blank lines (3)
+./car_controller/lidar_proto_pb2.py:27:3: E121 continuation line under-indented for hanging indent
+./car_controller/lidar_proto_pb2.py:32:5: E121 continuation line under-indented for hanging indent
+./car_controller/lidar_proto_pb2.py:33:7: E121 continuation line under-indented for hanging indent
+./car_controller/lidar_proto_pb2.py:37:7: E121 continuation line under-indented for hanging indent
+./car_controller/lidar_proto_pb2.py:50:3: E121 continuation line under-indented for hanging indent
+./car_controller/lidar_proto_pb2.py:56:5: E121 continuation line under-indented for hanging indent
+./car_controller/lidar_proto_pb2.py:57:7: E121 continuation line under-indented for hanging indent
+./car_controller/lidar_proto_pb2.py:64:7: E121 continuation line under-indented for hanging indent
+./car_controller/lidar_proto_pb2.py:75:5: E121 continuation line under-indented for hanging indent
+./car_controller/lidar_proto_pb2.py:89:3: E121 continuation line under-indented for hanging indent
+./car_controller/lidar_proto_pb2.py:95:5: E121 continuation line under-indented for hanging indent
+./car_controller/lidar_proto_pb2.py:96:7: E121 continuation line under-indented for hanging indent
+./car_controller/lidar_proto_pb2.py:103:7: E121 continuation line under-indented for hanging indent
+./car_controller/lidar_proto_pb2.py:127:3: E121 continuation line under-indented for hanging indent
+./car_controller/lidar_proto_pb2.py:133:5: E121 continuation line under-indented for hanging indent
+./car_controller/lidar_proto_pb2.py:134:7: E121 continuation line under-indented for hanging indent
+./car_controller/lidar_proto_pb2.py:141:7: E121 continuation line under-indented for hanging indent
+./car_controller/lidar_proto_pb2.py:165:3: E121 continuation line under-indented for hanging indent
+./car_controller/lidar_proto_pb2.py:171:5: E121 continuation line under-indented for hanging indent
+./car_controller/lidar_proto_pb2.py:172:7: E121 continuation line under-indented for hanging indent
+./car_controller/lidar_proto_pb2.py:196:3: E121 continuation line under-indented for hanging indent
+./car_controller/lidar_proto_pb2.py:202:5: E121 continuation line under-indented for hanging indent
+./car_controller/lidar_proto_pb2.py:203:7: E121 continuation line under-indented for hanging indent
+./car_controller/lidar_proto_pb2.py:236:3: E121 continuation line under-indented for hanging indent
+./car_controller/lidar_proto_pb2.py:236:15: E203 whitespace before ':'
+./car_controller/lidar_proto_pb2.py:237:15: E203 whitespace before ':'
+./car_controller/lidar_proto_pb2.py:239:3: E123 closing bracket does not match indentation of opening bracket's line
+./car_controller/lidar_proto_pb2.py:243:3: E121 continuation line under-indented for hanging indent
+./car_controller/lidar_proto_pb2.py:243:15: E203 whitespace before ':'
+./car_controller/lidar_proto_pb2.py:244:15: E203 whitespace before ':'
+./car_controller/lidar_proto_pb2.py:246:3: E123 closing bracket does not match indentation of opening bracket's line
+./car_controller/lidar_proto_pb2.py:250:3: E121 continuation line under-indented for hanging indent
+./car_controller/lidar_proto_pb2.py:250:15: E203 whitespace before ':'
+./car_controller/lidar_proto_pb2.py:251:15: E203 whitespace before ':'
+./car_controller/lidar_proto_pb2.py:253:3: E123 closing bracket does not match indentation of opening bracket's line
+./car_controller/lidar_proto_pb2.py:257:3: E121 continuation line under-indented for hanging indent
+./car_controller/lidar_proto_pb2.py:257:15: E203 whitespace before ':'
+./car_controller/lidar_proto_pb2.py:258:15: E203 whitespace before ':'
+./car_controller/lidar_proto_pb2.py:260:3: E123 closing bracket does not match indentation of opening bracket's line
+./car_controller/lidar_proto_pb2.py:264:3: E121 continuation line under-indented for hanging indent
+./car_controller/lidar_proto_pb2.py:264:15: E203 whitespace before ':'
+./car_controller/lidar_proto_pb2.py:265:15: E203 whitespace before ':'
+./car_controller/lidar_proto_pb2.py:267:3: E123 closing bracket does not match indentation of opening bracket's line
+./car_controller/message.py:33:5: E303 too many blank lines (2)
+./car_controller/message.py:80:14: E225 missing whitespace around operator
+./car_controller/message.py:243:1: E303 too many blank lines (3)
+./car_controller/message.py:267:9: E265 block comment should start with '# '
+./car_controller/message.py:354:37: E261 at least two spaces before inline comment
+./car_controller/message.py:354:38: E262 inline comment should start with '# '
+./car_controller/message.py:359:44: E261 at least two spaces before inline comment
+./car_controller/signal_protobuf_pb2.py:5:3: E225 missing whitespace around operator
+./car_controller/signal_protobuf_pb2.py:5:23: E225 missing whitespace around operator
+./car_controller/signal_protobuf_pb2.py:5:39: E231 missing whitespace after ':'
+./car_controller/signal_protobuf_pb2.py:5:55: E231 missing whitespace after ':'
+./car_controller/signal_protobuf_pb2.py:6:1: E402 module level import not at top of file
+./car_controller/signal_protobuf_pb2.py:7:1: E402 module level import not at top of file
+./car_controller/signal_protobuf_pb2.py:8:1: E402 module level import not at top of file
+./car_controller/signal_protobuf_pb2.py:9:1: E402 module level import not at top of file
+./car_controller/signal_protobuf_pb2.py:10:1: E402 module level import not at top of file
+./car_controller/signal_protobuf_pb2.py:18:1: E303 too many blank lines (4)
+./car_controller/signal_protobuf_pb2.py:19:3: E121 continuation line under-indented for hanging indent
+./car_controller/signal_protobuf_pb2.py:22:126: E501 line too long (490 > 125 characters)
+./car_controller/signal_protobuf_pb2.py:28:1: E303 too many blank lines (4)
+./car_controller/signal_protobuf_pb2.py:29:3: E121 continuation line under-indented for hanging indent
+./car_controller/signal_protobuf_pb2.py:35:5: E121 continuation line under-indented for hanging indent
+./car_controller/signal_protobuf_pb2.py:36:7: E121 continuation line under-indented for hanging indent
+./car_controller/signal_protobuf_pb2.py:43:7: E121 continuation line under-indented for hanging indent
+./car_controller/signal_protobuf_pb2.py:67:3: E121 continuation line under-indented for hanging indent
+./car_controller/signal_protobuf_pb2.py:73:5: E121 continuation line under-indented for hanging indent
+./car_controller/signal_protobuf_pb2.py:74:7: E121 continuation line under-indented for hanging indent
+./car_controller/signal_protobuf_pb2.py:81:7: E121 continuation line under-indented for hanging indent
+./car_controller/signal_protobuf_pb2.py:88:7: E121 continuation line under-indented for hanging indent
+./car_controller/signal_protobuf_pb2.py:95:7: E121 continuation line under-indented for hanging indent
+./car_controller/signal_protobuf_pb2.py:102:7: E121 continuation line under-indented for hanging indent
+./car_controller/signal_protobuf_pb2.py:119:5: E121 continuation line under-indented for hanging indent
+./car_controller/signal_protobuf_pb2.py:120:7: E121 continuation line under-indented for hanging indent
+./car_controller/signal_protobuf_pb2.py:129:3: E121 continuation line under-indented for hanging indent
+./car_controller/signal_protobuf_pb2.py:135:5: E121 continuation line under-indented for hanging indent
+./car_controller/signal_protobuf_pb2.py:136:7: E121 continuation line under-indented for hanging indent
+./car_controller/signal_protobuf_pb2.py:160:3: E121 continuation line under-indented for hanging indent
+./car_controller/signal_protobuf_pb2.py:163:3: E121 continuation line under-indented for hanging indent
+./car_controller/signal_protobuf_pb2.py:166:3: E121 continuation line under-indented for hanging indent
+./car_controller/signal_protobuf_pb2.py:169:3: E121 continuation line under-indented for hanging indent
+./car_controller/signal_protobuf_pb2.py:177:3: E121 continuation line under-indented for hanging indent
+./car_controller/signal_protobuf_pb2.py:177:13: E251 unexpected spaces around keyword / parameter equals
+./car_controller/signal_protobuf_pb2.py:177:15: E251 unexpected spaces around keyword / parameter equals
+./car_controller/signal_protobuf_pb2.py:178:13: E251 unexpected spaces around keyword / parameter equals
+./car_controller/signal_protobuf_pb2.py:178:15: E251 unexpected spaces around keyword / parameter equals
+./car_controller/signal_protobuf_pb2.py:180:3: E123 closing bracket does not match indentation of opening bracket's line
+./car_controller/signal_protobuf_pb2.py:184:3: E121 continuation line under-indented for hanging indent
+./car_controller/signal_protobuf_pb2.py:184:13: E251 unexpected spaces around keyword / parameter equals
+./car_controller/signal_protobuf_pb2.py:184:15: E251 unexpected spaces around keyword / parameter equals
+./car_controller/signal_protobuf_pb2.py:185:13: E251 unexpected spaces around keyword / parameter equals
+./car_controller/signal_protobuf_pb2.py:185:15: E251 unexpected spaces around keyword / parameter equals
+./car_controller/signal_protobuf_pb2.py:187:3: E123 closing bracket does not match indentation of opening bracket's line
+./car_controller/signal_protobuf_pb2.py:191:3: E121 continuation line under-indented for hanging indent
+./car_controller/signal_protobuf_pb2.py:191:13: E251 unexpected spaces around keyword / parameter equals
+./car_controller/signal_protobuf_pb2.py:191:15: E251 unexpected spaces around keyword / parameter equals
+./car_controller/signal_protobuf_pb2.py:192:13: E251 unexpected spaces around keyword / parameter equals
+./car_controller/signal_protobuf_pb2.py:192:15: E251 unexpected spaces around keyword / parameter equals
+./car_controller/signal_protobuf_pb2.py:194:3: E123 closing bracket does not match indentation of opening bracket's line
+1       E113 unexpected indentation
+82      E121 continuation line under-indented for hanging indent
+13      E123 closing bracket does not match indentation of opening bracket's line
+23      E128 continuation line under-indented for visual indent
+10      E203 whitespace before ':'
+1       E211 whitespace before '('
+9       E221 multiple spaces before operator
+2       E222 multiple spaces after operator
+8       E225 missing whitespace around operator
+21      E231 missing whitespace after ':'
+1       E241 multiple spaces after ','
+40      E251 unexpected spaces around keyword / parameter equals
+2       E252 missing whitespace around parameter equals
 6       E261 at least two spaces before inline comment
-6       E262 inline comment should start with '# '
-1       W291 trailing whitespace
-1       W293 blank line contains whitespace
+1       E262 inline comment should start with '# '
+10      E265 block comment should start with '# '
+2       E301 expected 1 blank line, found 0
+17      E303 too many blank lines (4)
+1       E305 expected 2 blank lines after class or function definition, found 1
+10      E402 module level import not at top of file
+6       E501 line too long (131 > 125 characters)
+1       E711 comparison to None should be 'if cond is not None:'
+5       E714 test for object identity should be 'is not'
+3       E722 do not use bare 'except'
+2       E741 ambiguous variable name 'l'
+1       E901 TokenError: EOF in multi-line statement
+4       W191 indentation contains tabs
+35      W291 trailing whitespace
+16      W292 no newline at end of file
+30      W293 blank line contains whitespace
+7       W391 blank line at end of file
+2       W504 line break after binary operator

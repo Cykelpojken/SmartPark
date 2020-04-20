@@ -1,0 +1,40 @@
+while True:
+    if c.slam_data_model.x is not None:
+        if c.slam_data_model.x/MAP_SIZE_METERS != prev_cords[0] \
+            or c.slam_data_model.y/MAP_SIZE_METERS != prev_cords[1]:
+            prev_cords[0] = c.slam_data_model.x/MAP_SIZE_METERS
+            prev_cords[1] = c.slam_data_model.y/MAP_SIZE_METERS
+            print(c.slam_data_model.x/MAP_SIZE_METERS, c.slam_data_model.y/MAP_SIZE_METERS)
+        print(c.slam_data_model.theta)
+        mapimg = np.reshape(np.frombuffer(c.slam_data_model.mapbytes, dtype=np.uint8), (MAP_SIZE_PIXELS, MAP_SIZE_PIXELS))
+        cv2.imwrite("map.png", mapimg)
+        t_map = ip.thresholding(mapimg)
+        d_map = ip.dilation(t_map)
+        e_map =  ip.erosion(d_map)
+        blur = ip.blur(e_map, BLURMAP, 0)
+        identified, coordinates = ip.find_spot(blur)
+        display_image = mapimg
+        # if coordinates is not None:
+        #     print("-----------------------------------------")
+        #     print ("parking coordinates: {}    {} ". format(coordinates[0], coordinates[1]))
+        #     print("-----------------------------------------")
+
+        send_bytes =display_image.shape[0].to_bytes(2, 'big') \
+              + display_image.shape[1].to_bytes(2, 'big') \
+              + display_image.tobytes()
+        socket.send(send_bytes)
+
+        time.sleep(0.1)
+
+    else:
+        # mapimg2 = cv2.imread("map.jpg", 0)
+        # print("asd")
+        # t_map = ip.thresholding(mapimg2)
+        # d_map = ip.dilation(t_map)
+        # e_map =  ip.erosion(d_map)
+        # blur = ip.blur(e_map)
+        # identified, coordinates = ip.find_spot(blur)
+        #ip.find_spot()
+        #print(MATCHES)
+        print("sleeping 1 sec")
+        time.sleep(1)

@@ -1,4 +1,4 @@
-from car_controller.car_controller_ import CarController #  pragma: no cover
+from car_controller.car_controller_ import CarController  # pragma: no cover
 import time
 import numpy as np
 import cv2
@@ -40,9 +40,6 @@ def blur(img=None, threshold=BOXBLUR, t=cv2.BORDER_DEFAULT):
 def find_spot(img=None):  # Working well ish
     parking_coordinates = None
 
-    # img = cv2.imread('erosion.jpg', 0)
-    # img = blur(img, 3, 0)
-
     box = cv2.imread('box.png', 0)  # queryImage
     box = blur(box, 3, 0)  # 5 here 5 other both 0 works ok
 
@@ -74,7 +71,7 @@ def find_spot(img=None):  # Working well ish
                                      maxIters=2000,
                                      confidence=0.999)
 
-        matchesMask = mask.ravel().tolist()
+        matchesmask = mask.ravel().tolist()
         h, w = box.shape
 
         pts = np.float32([[0, 0], [0, h-1], [w-1, h-1], [w-1, 0]]).reshape(-1, 1, 2)
@@ -91,11 +88,11 @@ def find_spot(img=None):  # Working well ish
             print("Got a bad frame")
 
     else:
-        matchesMask = None
+        matchesmask = None
 
     draw_params = dict(matchColor=(0, 255, 0),  # draw matches in green color
                        singlePointColor=None,
-                       matchesMas=matchesMask,  # draw only inliers
+                       matchesMas=matchesmask,  # draw only inliers
                        flags=2)
 
     img3 = cv2.drawMatches(box, kp1, img, kp2, good, None, **draw_params)

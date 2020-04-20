@@ -1,7 +1,7 @@
 from car_controller.car_controller_ import CarController
 import time
 
-c = car_controller("localhost")
+c = CarController("localhost")
 
 def allign(target_theta):
     while c.slam_data_model.theta != target_theta:
