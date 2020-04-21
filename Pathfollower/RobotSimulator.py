@@ -117,9 +117,6 @@ def draw_robot(img):
              (0, 0, 255), 2)
 
     cv2.imshow("img", tmp)
-    # if itt%6==0:
-    #     cv2.imwrite("images/" + str(itt) + ".png", tmp)
-    #     print(itt)
     cv2.waitKey(5)
 
 def click(event, x, y, flags, param):
@@ -136,8 +133,7 @@ config = configparser.ConfigParser()
 config.read("Pathfollower/config.ini")
 
 path = PathGenerator.finalpath
-# with open(config["PATH"]["FILE_LOCATION"]) as file:
-#     path = [([float(x) for x in line.split(",")]) for line in file.readlines()]
+
 
 
 scaler = float(config["FIELD_IMAGE"]["PIXELS_PER_UNIT"])
@@ -161,13 +157,10 @@ dim = (width2, height2)
 resized = cv2.resize(field, dim, interpolation=cv2.INTER_AREA)
 img = resized
 print("image_resized")
-# img = np.zeros((resized.shape[0], resized.shape[1], 3), np.uint8)
 start_pos = (path[0][0], path[0][1])  # (resized.shape[0]/2, resized.shape[1]/2)
-#cv2.imshow("img", img)
 draw_path(img)
 print("Rita path")
 print("Showimg")
-#cv2.setMouseCallback('img', click)
 print("wait4click")
 cv2.waitKey(5)
 print("waaiit")
@@ -195,8 +188,5 @@ while closest() != len(path)-1:
     itt += 1
 t2 = time.time()
 print("done")
-# print(t2 - t1)
-# print(statistics.mean(distances))
-# print(scaler)
-# print(distances)
+
 cv2.waitKey()

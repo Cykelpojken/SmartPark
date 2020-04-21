@@ -13,8 +13,6 @@ class Point(object):
         self.h = 0
         self.f = 0
         self.dir = 0
-        # self.parent = parent
-        # self.position = position
 
     def __add__(self, other):
         return Point(self.x + other.x, self.y + other.y)
@@ -154,7 +152,6 @@ def astar(maze, start_point, end_point):
     if found:
         p = end_point
         while p != start_point:
-            # print("point: ", (p.x, p.y), "parent: ",parent[p.y][p.x].x, parent[p.y][p.x].y)
             path.append(p)
             temp = (p.x, p.y)
             if (parent[p.y][p.x].x - p.x == 0):
@@ -176,9 +173,6 @@ def astar(maze, start_point, end_point):
         print(len(path))
         for p in path:
             img[p.y][p.x] = [255, 255, 255]
-
-        # print("Path Found")
-        # print(path)
 
     else:
         print("Path Not Found")
@@ -215,7 +209,6 @@ img = cv2.imread("Pathfollower/test2.png", cv2.IMREAD_GRAYSCALE)
 _, img = cv2.threshold(img, 120, 255, cv2.THRESH_BINARY)
 img = cv2.cvtColor(img, cv2.COLOR_GRAY2BGR)
 matrix = img[:, :, 0]
-# print(matrix)
 h, w = img.shape[:2]
 
 print("Select start and end points : ")
@@ -229,9 +222,3 @@ while p < 2:
 t1 = time.time()
 waypojk = astar(matrix, start, end)
 t2 = time.time()
-# print(t2 - t1)
-# waypojk = BFS(start, end)
-# astar(matrix, start, end)
-
-# cv2.waitKey(0)
-# time.sleep(2)
