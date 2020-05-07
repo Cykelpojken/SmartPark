@@ -50,13 +50,21 @@ class Main():
 
     def main_loop(self):
         while True:
+            self.img_test()
             display_image = np.reshape(
                  np.frombuffer(self.c.slam_data_model.mapbytes, dtype=np.uint8),
                  (self.MAP_SIZE_PIXELS, self.MAP_SIZE_PIXELS))
             print(self.c.slam_data_model.mapbytes)
             cv2.imwrite("map.jpg", display_image)
-
         
+    def img_test(self):
+        mapimg = cv2.imread("asd.png", 0)
+        t_map = ip.thresholding(mapimg)
+        d_map = ip.dilation(t_map)
+        e_map =  ip.erosion(d_map)
+        blur = ip.blur(e_map)
+        cv2.imwrite("asd2.png", blur)
+
 
             # # Extract (quality, angle, distance) triples from current scan
             # items = [item for item in next(self.iterator)]
