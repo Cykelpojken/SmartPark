@@ -1,8 +1,8 @@
 from car_controller.LidarScanModel import LidarScanModel
 import zmq
 from car_controller.ConfigModel import ConfigModel
-from threading import Thread
 import time
+import threading
 
 class LidarController:
     def __init__(self,
@@ -14,7 +14,7 @@ class LidarController:
         self.config_model = config_model
         self.conf_sub(self.subscriber_socket, b"", f"tcp://{self.config_model.address}:{self.config_model.lidar_port}")
 
-        Thread(target=self.recv_loop, daemon=True).start()
+        threading.Thread(target=self.recv_loop, daemon=True).start()
 
     def conf_sub(self, socket, filter_bytes, address):
         socket.setsockopt(zmq.RCVHWM, 1)

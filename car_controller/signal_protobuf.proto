@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+message CAN_Signals {
+    double timestamp = 1;
+    repeated Signal signals = 2;
+}
+
+message Signal {
+    int32 id = 1;
+    oneof data {
+        string string_data = 2;
+        float float_data = 3;
+        int32 int_data = 4;
+        bool bool_data = 5;
+  }
+}
+
+message Image {
+    bytes image_data = 1;
+}

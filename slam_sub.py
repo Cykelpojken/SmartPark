@@ -44,26 +44,26 @@ class sub:
 
             time.sleep(0.1)
 
-    def map_thread(self):
-        while True:
-            data = self.map_socket.recv()
-            occupancy_object = OccupancyGrid()
-            OccupancyGrid.deserialize(occupancy_object, data)
+    # def map_thread(self):
+    #     while True:
+    #         data = self.map_socket.recv()
+    #         occupancy_object = OccupancyGrid()
+    #         OccupancyGrid.deserialize(occupancy_object, data)
 
-            self.height = occupancy_object.info.height
-            self.width = occupancy_object.info.width
+    #         self.height = occupancy_object.info.height
+    #         self.width = occupancy_object.info.width
             
-            img = list(occupancy_object.data)
+    #         img = list(occupancy_object.data)
 
-            img = [x + 1 for x in img]
-            for p, x in enumerate(img):
-                    img[p] = 255 - x
-                    if img[p] == 255:
-                        img[p] = 255 - 50
+    #         img = [x + 1 for x in img]
+    #         for p, x in enumerate(img):
+    #                 img[p] = 255 - x
+    #                 if img[p] == 255:
+    #                     img[p] = 255 - 50
 
-            self.map = bytearray(img)
-            mapimg = np.reshape(np.frombuffer(self.map, dtype=np.uint8), (int(height), int(width)))
-            cv2.imwrite("asd.png", mapimg)
+    #         self.map = bytearray(img)
+    #         mapimg = np.reshape(np.frombuffer(self.map, dtype=np.uint8), (int(height), int(width)))
+    #         cv2.imwrite("asd.png", mapimg)
 
            
 

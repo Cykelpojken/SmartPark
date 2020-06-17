@@ -19,3 +19,6 @@ class StateModel:
                 signal_proto.id = signal.id
                 signal_proto.float_data = signal.data
         return signaldb_proto.SerializeToString()
+
+    def get_signal(id):
+        return signals[id-1]

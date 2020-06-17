@@ -2,10 +2,9 @@ from breezyslam.algorithms import RMHC_SLAM
 from breezyslam.sensors import RPLidarA1 as LaserModel
 from car_controller.LidarScanModel import LidarScanModel
 from car_controller.SlamDataModel import SlamDataModel
-import config as cfg
 
-MAP_SIZE_PIXELS         = cfg.MAP_SIZE_PIXELS
-MAP_SIZE_METERS         = cfg.MAP_SIZE_METERS
+MAP_SIZE_PIXELS         = 500
+MAP_SIZE_METERS         = 10
 LIDAR_DEVICE            = '/dev/ttyUSB0'
 
 slam = RMHC_SLAM(LaserModel(), MAP_SIZE_PIXELS, MAP_SIZE_METERS)
