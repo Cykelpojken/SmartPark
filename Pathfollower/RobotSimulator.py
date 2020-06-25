@@ -122,9 +122,6 @@ def draw_robot(img):
              (0, 0, 255), 2)
 
     cv2.imshow("img", tmp)
-    # if itt%6==0:
-    #     cv2.imwrite("images/" + str(itt) + ".png", tmp)
-    #     print(itt)
     cv2.waitKey(5)
 
 def click(event, x, y, flags, param):
@@ -140,9 +137,14 @@ def click(event, x, y, flags, param):
 config = configparser.ConfigParser()
 config.read("config.ini")
 
+<<<<<<< HEAD
 #path = PathGenerator.finalpath
 with open(config["PATH"]["FILE_LOCATION"]) as file:
     path = [([float(x) for x in line.split(",")]) for line in file.readlines()]
+=======
+path = PathGenerator.finalpath
+
+>>>>>>> 46674b379bbad32d6867fabb9c29eff690b3b3f6
 
 
 scaler = float(config["FIELD_IMAGE"]["PIXELS_PER_UNIT"])
@@ -164,10 +166,19 @@ height2 = int(field.shape[0] * scale_multiplier)
 dim = (width2, height2)
 resized = cv2.resize(field, dim, interpolation=cv2.INTER_AREA)
 img = resized
+<<<<<<< HEAD
 start_pos = (path[0][0], path[0][1])  # (resized.shape[0]/2, resized.shape[1]/2)
 cv2.imshow("img", img)
 draw_path(img)
 cv2.setMouseCallback('img', click)
+=======
+print("image_resized")
+start_pos = (path[0][0], path[0][1])  # (resized.shape[0]/2, resized.shape[1]/2)
+draw_path(img)
+print("Rita path")
+print("Showimg")
+print("wait4click")
+>>>>>>> 46674b379bbad32d6867fabb9c29eff690b3b3f6
 cv2.waitKey(5)
 itt = 0
 t1 = time.time()
@@ -191,6 +202,7 @@ while closest() != len(path)-1:
 t2 = time.time()
 print("done")
 
+<<<<<<< HEAD
 print("Average: ", mean(distances))
 print("Max: ", max(distances))
 print("Min: ", min(distances))
@@ -198,4 +210,6 @@ print("Min: ", min(distances))
 # print(statistics.mean(distances))
 # print(scaler)
 # print(distances)
+=======
+>>>>>>> 46674b379bbad32d6867fabb9c29eff690b3b3f6
 cv2.waitKey()

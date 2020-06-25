@@ -30,13 +30,4 @@ while True:
         time.sleep(0.1)
         
     else:
-        # mapimg2 = cv2.imread("map.jpg", 0)
-        # print("asd")
-        # t_map = ip.thresholding(mapimg2)
-        # d_map = ip.dilation(t_map)
-        # e_map =  ip.erosion(d_map)
-        # blur = ip.blur(e_map)
-        # identified, coordinates = ip.find_spot(blur)
-        #ip.find_spot()
-        print("sleeping 1 sec")
         time.sleep(1)

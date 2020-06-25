@@ -69,7 +69,7 @@ def find_spot(img=None): #Working well ish
 
         M, mask = cv2.findHomography(src_pts, dst_pts, method = cv2.RANSAC, ransacReprojThreshold = 5, maxIters = 2000, confidence = 0.999)
 
-        matchesMask = mask.ravel().tolist()
+        matchesmask = mask.ravel().tolist()
         h,w = box.shape
 
         pts = np.float32([ [0,0],[0,h-1],[w-1,h-1],[w-1,0] ]).reshape(-1,1,2)
@@ -90,11 +90,11 @@ def find_spot(img=None): #Working well ish
             print("got a bad frame")
 
     else:
-        matchesMask = None
+        matchesmask = None
 
     draw_params = dict(matchColor = (0,255,0), # draw matches in green color
                 singlePointColor = None,
-                matchesMask = matchesMask, # draw only inliers
+                matchesmask = matchesmask, # draw only inliers
                 flags = 2)
 
     img3 = cv2.drawMatches(box,kp1,img,kp2,good,None,**draw_params)
