@@ -3,7 +3,8 @@ import math
 import numpy as np
 import cv2
 import time
-from Pathfollower import PathGenerator
+from statistics import mean, median
+#import PathGenerator
 distances = []
 
 def Average(lst):
@@ -15,10 +16,12 @@ def closest():
     mindist = (0, math.sqrt((path[0][0] - pos[0]) ** 2 + (path[0][1] - pos[1]) ** 2))
     for i, p in enumerate(path):
         dist = math.sqrt((p[0]-pos[0])**2 + (p[1]-pos[1])**2)
-        distances.append(dist)
         if dist < mindist[1]:
             mindist = (i, dist)
-
+    #print("Position: ", pos[0], pos[1])
+    #print("Closest : ", path[mindist[0]][0], path[mindist[0]][1])
+    hypo = math.sqrt(((pos[0] - path[mindist[0]][0]) ** 2) + ((pos[1] - path[mindist[0]][1]) ** 2))
+    distances.append(hypo)
     return mindist[0]
 def lookahead():
     global path, t, t_i, pos
@@ -51,6 +54,7 @@ def lookahead():
                 return p[0]+t*d[0], p[1]+t*d[1]
     t = 0
     t_i = 0
+    
     return path[closest()][0:2]
 def curvature(lookahead):
     global path, pos, angle
@@ -58,6 +62,7 @@ def curvature(lookahead):
     a = -math.tan(3.1415/2 - angle)
     c = math.tan(3.1415/2 - angle)*pos[0] - pos[1]
     x = abs(a*lookahead[0] + lookahead[1] + c) / math.sqrt(a**2 + 1)
+    #print(x)
     return side * (2*x/(float(config["PATH"]["LOOKAHEAD"])**2))
 def turn(curv, vel, trackwidth):
     return [vel*(2+curv*trackwidth)/2, vel*(2-curv*trackwidth)/2]
@@ -133,11 +138,11 @@ def click(event, x, y, flags, param):
 
 
 config = configparser.ConfigParser()
-config.read("Pathfollower/config.ini")
+config.read("config.ini")
 
-path = PathGenerator.finalpath
-# with open(config["PATH"]["FILE_LOCATION"]) as file:
-#     path = [([float(x) for x in line.split(",")]) for line in file.readlines()]
+#path = PathGenerator.finalpath
+with open(config["PATH"]["FILE_LOCATION"]) as file:
+    path = [([float(x) for x in line.split(",")]) for line in file.readlines()]
 
 
 scaler = float(config["FIELD_IMAGE"]["PIXELS_PER_UNIT"])
@@ -152,49 +157,43 @@ wheels = [0, 0]
 
 dt = 0.005
 
-field = PathGenerator.image #cv2.imread(config["FIELD_IMAGE"]["FILE_LOCATION"])
-print("image_read")
-scale_multiplier = 2
+field = cv2.imread(config["FIELD_IMAGE"]["FILE_LOCATION"])  #  field = PathGenerator.image
+scale_multiplier = 1
 width2 = int(field.shape[1] * scale_multiplier)
 height2 = int(field.shape[0] * scale_multiplier)
 dim = (width2, height2)
 resized = cv2.resize(field, dim, interpolation=cv2.INTER_AREA)
 img = resized
-print("image_resized")
-# img = np.zeros((resized.shape[0], resized.shape[1], 3), np.uint8)
 start_pos = (path[0][0], path[0][1])  # (resized.shape[0]/2, resized.shape[1]/2)
-#cv2.imshow("img", img)
+cv2.imshow("img", img)
 draw_path(img)
-print("Rita path")
-print("Showimg")
-#cv2.setMouseCallback('img', click)
-print("wait4click")
+cv2.setMouseCallback('img', click)
 cv2.waitKey(5)
-print("waaiit")
 itt = 0
 t1 = time.time()
 while closest() != len(path)-1:
-    print("Loopa")
     look = lookahead()
     close = closest()
     curv = curvature(look) if t_i > close else 0.00001
     vel = path[close][2]
-    print("senare i loopen")
     last_wheels = wheels
     wheels = turn(curv, vel, width)
 
     for i, w in enumerate(wheels):
         wheels[i] = last_wheels[i] + min(float(config["ROBOT"]["MAX_VEL_CHANGE"])*dt,
                                          max(-float(config["ROBOT"]["MAX_VEL_CHANGE"])*dt, w-last_wheels[i]))
-        print("loopa för wheels")
+
     pos = (pos[0] + (wheels[0]+wheels[1])/2*dt * math.sin(angle), pos[1] + (wheels[0]+wheels[1])/2*dt * math.cos(angle))
     angle += math.atan((wheels[0]-wheels[1])/width*dt)
     time.sleep(0.02)
     draw_robot(img)
-    print("Robot draw")
     itt += 1
 t2 = time.time()
 print("done")
+
+print("Average: ", mean(distances))
+print("Max: ", max(distances))
+print("Min: ", min(distances))
 # print(t2 - t1)
 # print(statistics.mean(distances))
 # print(scaler)

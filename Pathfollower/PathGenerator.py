@@ -3,7 +3,8 @@ import configparser
 import math
 import sys
 import time
-from Pathfollower import pathfinder3
+import pathfinder3
+import runner
 # HANDLE MOUSE EVENTS FOR SELECTION
 
 
@@ -40,24 +41,16 @@ def place_point(img, x, y, shift, add):
 
 
 # INITIALIZE VALUES
-img = pathfinder3.img
-waypoints = pathfinder3.waypojk
-# waypoints = []
-# for t in waypointssmall:
-#    waypoints.append((t[0]*2, t[1]*2))
+img = runner.img
+waypoints = runner.waypoints
 start_pos = (0, 0)
 mouse_down = False
 
 # READ CONFIG FILE
 config = configparser.ConfigParser()
-config.read("Pathfollower/config.ini")
+config.read("config.ini")
 scaler = 1.0  # float(config["FIELD_IMAGE"]["PIXELS_PER_UNIT"])
 
-# READ & SHOW IMAGE, SET OPENCV PROPERTIES
-# img = cv2.imread(config["FIELD_IMAGE"]["FILE_LOCATION"])
-# cv2.imshow("Field", img)
-# cv2.setMouseCallback("Field", click)
-# cv2.waitKey()
 
 # MAKE SURE AT LEAST 2 POINTS SELECTED
 if len(waypoints) < 2:
@@ -65,7 +58,6 @@ if len(waypoints) < 2:
 
 # CONVERT PIXELS TO INCHES, CALCULATE WAYPOINT DISTANCE, INJECT MID-WAYPOINTS
 total_waypoints = []
-#print(waypoints)
 waypoints[0] = tuple(x/scaler for x in waypoints[0])
 for i in range(len(waypoints)-1):
     waypoints[i+1] = tuple(x/scaler for x in waypoints[i+1])
@@ -102,8 +94,8 @@ smooth_waypoints[-1].append(0.1)
 for i, w in enumerate(smooth_waypoints[1:-1], start=1):
     if w[0] == smooth_waypoints[i-1][0]:
         # print(w[0], smooth_waypoints[i-1][0])
-        w[0] += 0.0001  # Error fix for divide-by-zero.. Tolerance?
-        w[1] += 0.0001  # Error fix for divide-by-zero.. Tolerance?
+        w[0] += 0.0001  # Error fix for divide-by-zero.
+        w[1] += 0.0001  # Error fix for divide-by-zero.
     k1 = .5*(w[0]**2 + w[1]**2 -
              smooth_waypoints[i-1][0]**2 -
              smooth_waypoints[i-1][1]**2) / \
@@ -148,10 +140,10 @@ for i, w in enumerate(smooth_waypoints[1:], start=1):
 finalpath = smooth_waypoints
 image = img
 
-#cv2.destroyAllWindows()
 time.sleep(0.5)
 # WRITE RESULTS TO FILE
-# with open(config["PATH"]["FILE_LOCATION"], "w+") as file:
-#     for w in smooth_waypoints:
-#         file.write(str(w[0]) + "," + str(w[1]) + "," + str(w[5]) + "\n")
-# cv2.waitKey()
+with open(config["PATH"]["FILE_LOCATION"], "w+") as file:
+    for w in smooth_waypoints:
+        file.write(str(w[0]) + "," + str(w[1]) + "," + str(w[5]) + "\n")
+time.sleep(1)
+#cv2.waitKey()
